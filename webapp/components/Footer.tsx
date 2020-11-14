@@ -9,7 +9,7 @@ const Footer = (): JSX.Element => (
       marginTop: '50px',
     }}
   >
-    Med ☕ av Webkom | for <strong>Abakus</strong> |{' '}
+    Originalt for <strong>Abakus</strong> | Adoptert av <strong>NTNUI</strong> |{' '}
     <a
       style={{
         textDecoration: 'none',

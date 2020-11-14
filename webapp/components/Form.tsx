@@ -63,14 +63,14 @@ const Form = (): JSX.Element => {
         variant="h4"
         style={{ width: '100%', textAlign: 'center', marginBottom: '1em' }}
       >
-        Kvitteringsskjema
+        Refusjonsskjema
       </Typography>
       <Input
         name="Navn"
         value={name}
         required
         updateForm={setName}
-        helperText="Ditt fulle navn, slik kvitteringen viser"
+        helperText="Ditt fulle navn, nøyaktig"
       />
       <Input
         name="Din epost"
@@ -80,17 +80,17 @@ const Form = (): JSX.Element => {
         helperText="Din kopi av skjema går hit"
       />
       <Input
-        name="Komité"
+        name="Gruppe/utvalg"
         value={committee}
         updateForm={setCommittee}
-        helperText={'Den komitén som skylder deg penger'}
+        helperText={'De som skylder deg penger'}
       />
       <Input
-        name="Økans epost"
+        name="Kasserers epost"
         value={mailto}
         required
         updateForm={setMailto}
-        helperText="Økans til komitén/gruppen"
+        helperText="Ofte 'gruppe-kasserer@ntnui.no'"
       />
       <Input
         name="Kontonummer"
@@ -98,7 +98,7 @@ const Form = (): JSX.Element => {
         required
         type="number"
         updateForm={setAccountNumber}
-        helperText="Pengene overføres til dette nummeret"
+        helperText="Refusjon overføres til denne kontoen"
       />
       <Input
         name="Beløp"
@@ -115,14 +115,14 @@ const Form = (): JSX.Element => {
         required
         type="date"
         updateForm={setDate}
-        helperText="Helst samme som på kvittering"
+        helperText="Samme som på kvitteringen"
       />
       <Input
         name="Anledning"
         multiline
         value={occasion}
         updateForm={setOccasion}
-        helperText="I hvilken anledning har du lagt ut"
+        helperText="For eksempel navnet til et arrangement"
       />
       <Input
         name="Kommentar"
@@ -174,7 +174,7 @@ const Form = (): JSX.Element => {
         }}
       >
         <ReceiptIcon style={{ marginRight: '10px' }} />
-        <Typography variant="h6">Generer Kvittering</Typography>
+        <Typography variant="h6">Generer Bilag</Typography>
       </Button>
     </Paper>
   );

@@ -46,3 +46,4 @@ HEALTHCHECK --interval=5s CMD [ -e /tmp/.lock ] || exit 1
 
 ENV fprocess="python kaaf/server.py"
 CMD ["fwatchdog"]
+EXPOSE 5000

@@ -51,8 +51,7 @@ def data_is_valid(data):
 
 class PDF(FPDF):
     def header(self):
-        self.image("images/abakus.png", 10, 18, 33)
-        self.image("images/netcompany.png", 160, 11, 40)
+        self.image("images/ntnui.png", 10, 18, 33)
         self.set_font("Arial", "B", 15)
         self.ln(20)
 
