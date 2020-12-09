@@ -15,14 +15,14 @@ class MailConfigurationException(Exception):
 def create_mail(msg, body):
     msg[
         "Subject"
-    ] = f'Kvitteringsskjema fra {body["name"]}, {formatdate(localtime=True)}'
+    ] = f'Refusjonsskjema - {body["name"]}, {formatdate(localtime=True)}'
 
     text = ""
-    text += f'Laget av: {body.get("name", "")}\n'
+    text += f'Sendt av: {body.get("name", "")}\n'
     text += f'Anledning: {body.get("occasion", "")}\n'
     text += f'Beløp: {body.get("amount", "")}\n'
     text += f'Kommentar: {body.get("comment", "")}\n'
-    text += f"Kvitteringsskjema er lagt ved i pdf"
+    text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med informasjon@ntnui.no"
 
     msg.attach(MIMEText(text))
 
@@ -40,7 +40,7 @@ def send_mail(mail_to, body, file):
 
     create_mail(msg, body)
 
-    filename = "kvitteringsskjema.pdf"
+    filename = "refusjonsskjema.pdf"
     part = MIMEApplication(file, Name=filename)
     part["Content-Disposition"] = f'attachment; filename="{filename}"'
     msg.attach(part)
