@@ -29,7 +29,7 @@ field_title_map = {
     "committee": "Gruppe/utvalg:",
     "accountNumber": "Kontonummer:",
     "date": "Dato:",
-    "occasion": "Anledning:",
+    "occasion": "Anledning/arrangement:",
     "amount": "Beløp:",
     "comment": "Kommentar:",
 }
@@ -209,4 +209,4 @@ def handle(data):
         return f"Noe uventet skjedde: {e}", 400
 
     logging.info("Successfully generated pdf and sent mail")
-    return "Refusjonsskjema generert og sendt på mail til kasserer!", 200
+    return "Refusjonsskjema generert og sendt", 200

@@ -70,7 +70,7 @@ const Form = (): JSX.Element => {
         value={name}
         required
         updateForm={setName}
-        helperText="Ditt fulle navn, nøyaktig"
+        helperText="Ditt fulle navn"
       />
       <Input
         name="Din epost"
@@ -82,11 +82,12 @@ const Form = (): JSX.Element => {
       <Input
         name="Gruppe/utvalg"
         value={committee}
+        required
         updateForm={setCommittee}
-        helperText={'De som skylder deg penger'}
+        helperText={'Som utgiften skal betales av'}
       />
       <Input
-        name="Kasserers epost"
+        name="Din kasserers epost"
         value={mailto}
         required
         updateForm={setMailto}
@@ -118,19 +119,20 @@ const Form = (): JSX.Element => {
         helperText="Samme som på kvitteringen"
       />
       <Input
-        name="Anledning"
-        multiline
+        name="Anledning/arrangement"
+        required
         value={occasion}
         updateForm={setOccasion}
-        helperText="For eksempel navnet til et arrangement"
+        helperText="Som utgiften er knyttet til"
       />
       <Input
         name="Kommentar"
         multiline
         fullWidth
+        required
         value={comment}
         updateForm={setComment}
-        helperText="Fyll inn ekstra informasjon hvis nødvendig"
+        helperText="Beskriv utgiften"
       />
       <SignatureUpload updateForm={setSignature} setSignature={setSignature} />
       <PictureUpload updateForm={setImages} />

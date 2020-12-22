@@ -25,6 +25,7 @@ class MyDocument extends Document {
             content="minimum-scale=1, initial-scale=1, width=device-width"
           />
           <link rel="icon" href="/favicon.ico" />
+          <title>NTNUI Refusjonsskjema</title>
         </Head>
         <body>
           <Main />

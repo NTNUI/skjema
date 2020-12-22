@@ -19,10 +19,10 @@ def create_mail(msg, body):
 
     text = ""
     text += f'Sendt av: {body.get("name", "")}\n'
-    text += f'Anledning: {body.get("occasion", "")}\n'
+    text += f'Anledning/arrangement: {body.get("occasion", "")}\n'
     text += f'Beløp: {body.get("amount", "")}\n'
-    text += f'Kommentar: {body.get("comment", "")}\n'
-    text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med informasjon@ntnui.no"
+    text += f'Kommentar: {body.get("comment", "")}\n\n'
+    text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med kasserer@ntnui.no"
 
     msg.attach(MIMEText(text))
 

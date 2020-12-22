@@ -2,3 +2,5 @@ node_modules/
 webapp/.next/
 webapp/out/
 venv/
+kaaf/__pycache__/
+.vscode/
