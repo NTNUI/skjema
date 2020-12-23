@@ -209,4 +209,4 @@ def handle(data):
         return f"Noe uventet skjedde: {e}", 400
 
     logging.info("Successfully generated pdf and sent mail")
-    return "Refusjonsskjema generert og sendt", 200
+    return "Refusjonsskjema generert og sendt til kasserer!", 200

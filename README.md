@@ -4,7 +4,7 @@ Based on [webkom/kvittering](https://github.com/webkom/kvittering), configured t
 
 ## Getting started
 
-This is one docker image that serves both the python api, and the next/react frontend, this is done by building the webapp as a static site, and serving it as static files through flask.
+This is one docker image that serves both the Python API, and the Next.js/React frontend. This is done by building the webapp as a static site, and serving it as static files through flask. Be aware that some of the python imports does not support development in Windows.
 
 To run just the frontend:
 
