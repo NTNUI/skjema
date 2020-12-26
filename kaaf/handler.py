@@ -25,12 +25,12 @@ class UnsupportedFileException(Exception):
 
 
 field_title_map = {
-    "name": "Navn:",
-    "committee": "Gruppe/utvalg:",
-    "accountNumber": "Kontonummer:",
     "date": "Dato:",
-    "occasion": "Anledning/arrangement:",
+    "committee": "Gruppe/utvalg:",
+    "name": "Navn:",
+    "accountNumber": "Kontonummer:",
     "amount": "Beløp:",
+    "occasion": "Anledning/arrangement:",
     "comment": "Kommentar:",
 }
 
@@ -147,15 +147,16 @@ def create_pdf(data):
     pdf.set_font("Arial", "", 12)
     for key in field_title_map.keys():
         pdf.set_font("", "B")
-        pdf.cell(90, 5, txt=field_title_map[key])
+        pdf.cell(90, 8, txt=field_title_map[key])
         pdf.set_font("", "")
-        pdf.multi_cell(0, 5, txt=data[key])
+        pdf.multi_cell(0, 8, txt=data[key])
 
     pdf.set_font("", "B")
-    pdf.cell(0, 5, txt="Signatur:", ln=1)
+    pdf.cell(0, 20, txt="Signatur:", ln=1)
     pdf.image(signature["file"].name, h=30, type=signature["type"])
     signature["file"].close()
-    pdf.cell(0, 5, txt="Vedlegg:", ln=1)
+    pdf.cell(0, 5, txt="", ln=1)
+    pdf.cell(0, 20, txt="Vedlegg:", ln=1)
     max_img_width = 190
     max_img_height = 220
     for image in images:

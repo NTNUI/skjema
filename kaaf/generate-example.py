@@ -4,13 +4,13 @@ import base64
 from handler import create_pdf, modify_data
 
 default_data = {
-    "date": "11-03-2020",
-    "amount": "153 kr",
-    "name": "Lar",
+    "date": "2020-12-27",
+    "amount": "69 kr",
+    "name": "Mats",
     "accountNumber": "010101010101",
-    "committee": "Komkom",
+    "committee": "Hovedstyret",
     "occasion": "Teste litt",
-    "comment": "pls",
+    "comment": "pls work",
 }
 
 
