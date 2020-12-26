@@ -2,7 +2,9 @@
 
 Based on [webkom/kvittering](https://github.com/webkom/kvittering), configured to run as a normal docker container.
 
-## Getting started
+Handles refund requests for [NTNUI](https://ntnui.no).
+
+## Development
 
 This is one docker image that serves both the Python API, and the Next.js/React frontend. This is done by building the webapp as a static site, and serving it as static files through flask. Be aware that some of the python imports does not support development in Windows.
 
@@ -23,16 +25,7 @@ To run the backend/everything:
 > One of the packages (pdf2image) will require poppler to work correctly with tmp files. Most linux distros come with this.
 > For MacOS `brew install poppler`
 
-## Environment variables
-
-| Variable        | Function                                     |
-| --------------- | -------------------------------------------- |
-| `MAIL_ADDRESS`  | Set the mail address for geenerated receipts |
-| `MAIL_PASSWORD` | Password for the mail account                |
-| `ENVIRONMENT`   | Set to "production" for sentry errors        |
-| `SENTRY_DSN`    | Ingest errors to sentry                      |
-
-## Generating PDFs
+### Generating PDFs
 
 It might be nice to be able to quickly generate PDFs when developing, without having to start up everything. To do this you can run:
 
@@ -41,3 +34,12 @@ python kaaf/generate-example.py signature.png output.pdf image0.png image1.png .
 ```
 
 Where `signature.png` and `imageN.png` are paths to image files (the latter images are optional)
+
+## Environment variables
+
+| Variable        | Function                                     |
+| --------------- | -------------------------------------------- |
+| `MAIL_ADDRESS`  | Set the mail address for generated receipts |
+| `MAIL_PASSWORD` | Password for the mail account                |
+| `ENVIRONMENT`   | Set to "production" for sentry errors        |
+| `SENTRY_DSN`    | Ingest errors to sentry                      |
