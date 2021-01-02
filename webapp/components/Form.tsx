@@ -176,7 +176,7 @@ const Form = (): JSX.Element => {
         }}
       >
         <ReceiptIcon style={{ marginRight: '10px' }} />
-        <Typography variant="h6">Generer Bilag</Typography>
+        <Typography variant="h6">Generer bilag</Typography>
       </Button>
     </Paper>
   );

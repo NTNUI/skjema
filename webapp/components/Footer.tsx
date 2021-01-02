@@ -9,13 +9,13 @@ const Footer = (): JSX.Element => (
       marginTop: '50px',
     }}
   >
-    Originalt for <strong>Abakus</strong> | Adoptert av <strong>NTNUI</strong> |{' '}
+    Originalt av og for <strong>Abakus</strong> | Adoptert av <strong>NTNUI</strong> |{' '}
     <a
       style={{
         textDecoration: 'none',
         color: '#BC1818',
       }}
-      href="https://github.com/webkom/kvittering"
+      href="https://github.com/NTNUI/skjema"
       target="blank"
     >
       Bidra her
