@@ -15,7 +15,7 @@ const Form = (): JSX.Element => {
 
   // Hooks for each field in the form
   const [images, setImages] = useState<Array<string>>([]);
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState('');
   const [occasion, setOccasion] = useState('');
   const [amount, setAmount] = useState('');
   const [comment, setComment] = useState('');
@@ -25,14 +25,18 @@ const Form = (): JSX.Element => {
   const [committee, setCommittee] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [mailfrom, setMailfrom] = useState('');
-
+  const [team, setTeam] = useState('');
+  const [dateEnd, setDateEnd] = useState('');
+  const [destination, setDestination] = useState('');
+  const [route, setRoute] = useState('');
+  
   // Hooks for submittion
   const [submitting, setSumbitting] = useState(false);
   const [success, setSuccess] = useState<boolean | null>(null);
   const [response, setResponse] = useState<string | null>(null);
 
   // The body object sendt to the backend
-  const formBody = {
+  const formBody = { 
     images,
     date,
     occasion,
@@ -44,6 +48,10 @@ const Form = (): JSX.Element => {
     committee,
     accountNumber,
     mailfrom,
+    team,
+    dateEnd,
+    destination,
+    route
   };
 
   const Response = (): JSX.Element => (
@@ -63,7 +71,7 @@ const Form = (): JSX.Element => {
         variant="h4"
         style={{ width: '100%', textAlign: 'center', marginBottom: '1em' }}
       >
-        Refusjonsskjema
+        Reiseregningsskjema
       </Typography>
       <Input
         name="Navn"
@@ -111,12 +119,20 @@ const Form = (): JSX.Element => {
         helperText="Beløpet du ønsker refundert"
       />
       <Input
-        name="Kjøpsdato"
+        name="Reise startdato"
         value={date}
         required
         type="date"
         updateForm={setDate}
-        helperText="Samme som på kvitteringen"
+        helperText="Dato dere reiste"
+      />
+      <Input
+        name="Reise sluttdato"
+        value={dateEnd}
+        required
+        type="date"
+        updateForm={setDateEnd}
+        helperText="Dato dere kom hjem"
       />
       <Input
         name="Anledning/arrangement"
@@ -126,13 +142,34 @@ const Form = (): JSX.Element => {
         helperText="Som utgiften er knyttet til"
       />
       <Input
+        name="Reisefølge"
+        multiline
+        required
+        value={team}
+        updateForm={setTeam}
+        helperText="Lag og/eller personer som har reist"
+      />
+      <Input
+        name="Reisedestinasjon"
+        required
+        value={destination}
+        updateForm={setDestination}
+        helperText="F.eks. 'Domus Athletica, Oslo'"
+      />
+      <Input
+        name="Reiserute"
+        multiline
+        required
+        value={route}
+        updateForm={setRoute}
+        helperText="F.eks. 'Trondheim-Oslo-Trondheim'"
+      />
+      <Input
         name="Kommentar"
         multiline
         fullWidth
-        required
         value={comment}
         updateForm={setComment}
-        helperText="Beskriv utgiften"
       />
       <SignatureUpload updateForm={setSignature} setSignature={setSignature} />
       <PictureUpload updateForm={setImages} />
@@ -176,7 +213,7 @@ const Form = (): JSX.Element => {
         }}
       >
         <ReceiptIcon style={{ marginRight: '10px' }} />
-        <Typography variant="h6">Generer Bilag</Typography>
+        <Typography variant="h6">Send reiseregning</Typography>
       </Button>
     </Paper>
   );

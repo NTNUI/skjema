@@ -25,12 +25,16 @@ class UnsupportedFileException(Exception):
 
 
 field_title_map = {
-    "date": "Dato:",
     "committee": "Gruppe/utvalg:",
     "name": "Navn:",
     "accountNumber": "Kontonummer:",
     "amount": "Beløp:",
     "occasion": "Anledning/arrangement:",
+    "date": "Reise startdato:",
+    "dateEnd": "Reise sluttdato:",
+    "team": "Reisefølge:",
+    "destination": "Reisedestinasjon:",
+    "route": "Reiserute:",
     "comment": "Kommentar:",
 }
 
@@ -39,6 +43,7 @@ def data_is_valid(data):
     fields = [
         "images",
         "date",
+        "dateEnd",
         "amount",
         "mailto",
         "signature",
@@ -142,7 +147,7 @@ def create_pdf(data):
     signature = data.pop("signature")
     images = data.pop("images")
 
-    pdf.cell(0, 14, "Refusjonsskjema", ln=1)
+    pdf.cell(0, 14, "Reiseregning", ln=1)
 
     pdf.set_font("Arial", "", 12)
     for key in field_title_map.keys():
@@ -210,4 +215,4 @@ def handle(data):
         return f"Noe uventet skjedde: {e}", 400
 
     logging.info("Successfully generated pdf and sent mail")
-    return "Refusjonsskjema generert og sendt til kasserer!", 200
+    return "Reiseregning generert og sendt til kasserer!", 200

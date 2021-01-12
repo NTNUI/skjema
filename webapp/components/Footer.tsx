@@ -15,7 +15,7 @@ const Footer = (): JSX.Element => (
         textDecoration: 'none',
         color: '#BC1818',
       }}
-      href="https://github.com/Xtrah/skjema"
+      href="https://github.com/NTNUI/skjema"
       target="blank"
     >
       Bidra her

@@ -7,7 +7,7 @@ export default function MyApp({ Component, pageProps }: any): JSX.Element {
   return (
     <>
       <Head>
-        <title>Refusjonsskjema for NTNUI</title>
+        <title>Reiseregningsskjema for NTNUI</title>
       </Head>
       <Component {...pageProps} />
     </>
