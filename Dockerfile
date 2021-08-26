@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.7.6 as watchdog
+FROM openfaas/of-watchdog:0.8.2 as watchdog
 FROM python:3.7-slim AS build-backend
 
 RUN apt-get update && apt-get install -y poppler-utils
@@ -12,7 +12,7 @@ COPY ./kaaf/req.txt ./kaaf/req.txt
 
 RUN pip install --no-cache-dir -r kaaf/req.txt
 
-FROM node:13.8-buster-slim AS build-frontend
+FROM node:16-alpine3.11 AS build-frontend
 
 WORKDIR /build
 
