@@ -26,17 +26,18 @@ const Form = (): JSX.Element => {
   const [accountNumber, setAccountNumber] = useState('');
   const [mailfrom, setMailfrom] = useState('');
   const [team, setTeam] = useState('');
+  const [numberOfTravelers, setNumberOfTravelers] = useState('');
   const [dateEnd, setDateEnd] = useState('');
   const [destination, setDestination] = useState('');
   const [route, setRoute] = useState('');
-  
+
   // Hooks for submittion
   const [submitting, setSumbitting] = useState(false);
   const [success, setSuccess] = useState<boolean | null>(null);
   const [response, setResponse] = useState<string | null>(null);
 
   // The body object sendt to the backend
-  const formBody = { 
+  const formBody = {
     images,
     date,
     occasion,
@@ -49,9 +50,10 @@ const Form = (): JSX.Element => {
     accountNumber,
     mailfrom,
     team,
+    numberOfTravelers,
     dateEnd,
     destination,
-    route
+    route,
   };
 
   const Response = (): JSX.Element => (
@@ -137,6 +139,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Anledning/arrangement"
         required
+        fullWidth
         value={occasion}
         updateForm={setOccasion}
         helperText="Som utgiften er knyttet til"
@@ -148,6 +151,14 @@ const Form = (): JSX.Element => {
         value={team}
         updateForm={setTeam}
         helperText="Lag og/eller personer som har reist"
+      />
+      <Input
+        name="Antall reisende"
+        multiline
+        required
+        value={numberOfTravelers}
+        updateForm={setNumberOfTravelers}
+        helperText="Hvor mange i reisefølget"
       />
       <Input
         name="Reisedestinasjon"

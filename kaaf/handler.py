@@ -33,6 +33,7 @@ field_title_map = {
     "date": "Reise startdato:",
     "dateEnd": "Reise sluttdato:",
     "team": "Reisefølge:",
+    "numberOfTravelers": "Antall reisende:",
     "destination": "Reisedestinasjon:",
     "route": "Reiserute:",
     "comment": "Kommentar:",

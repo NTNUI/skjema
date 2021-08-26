@@ -26,6 +26,7 @@ def create_mail(msg, body):
     text += f'Reise startdato: {body.get("date", "")}\n'
     text += f'Reise sluttdato: {body.get("dateEnd", "")}\n'
     text += f'Reisefølge: {body.get("team", "")}\n'
+    text += f'Antall reisende: {body.get("numberOfTravelers", "")}\n'
     text += f'Reisedestinasjon: {body.get("destination", "")}\n'
     text += f'Reiserute: {body.get("route", "")}\n'
     text += f'Kommentar: {body.get("comment", "")}\n\n'
