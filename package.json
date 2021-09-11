@@ -1,12 +1,12 @@
 {
-  "name": "kvittering",
+  "name": "skjema",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "Kvittering Webapp",
-  "author": "webkom",
+  "description": "NTNUI skjema webapp",
+  "author": "NTNUI",
   "repository": {
     "type": "git",
-    "url": "github.com/webkom/kvittering"
+    "url": "github.com/NTNUI/skjema"
   },
   "scripts": {
     "dev": "next dev webapp",
