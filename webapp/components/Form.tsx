@@ -14,17 +14,17 @@ const Form = (): JSX.Element => {
   const today = new Date().toISOString().split('T')[0].toString();
 
   // Hooks for each field in the form
-  const [images, setImages] = useState<Array<string>>([]);
+  const [name, setName] = useState('');
+  const [mailfrom, setMailfrom] = useState('');
+  const [committee, setCommittee] = useState('');
+  const [mailto, setMailto] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [amount, setAmount] = useState('');
   const [date, setDate] = useState(today);
   const [occasion, setOccasion] = useState('');
-  const [amount, setAmount] = useState('');
   const [comment, setComment] = useState('');
-  const [mailto, setMailto] = useState('');
   const [signature, setSignature] = useState('');
-  const [name, setName] = useState('');
-  const [committee, setCommittee] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [mailfrom, setMailfrom] = useState('');
+  const [images, setImages] = useState<Array<string>>([]);
 
   // Hooks for submittion
   const [submitting, setSumbitting] = useState(false);
@@ -33,17 +33,17 @@ const Form = (): JSX.Element => {
 
   // The body object sendt to the backend
   const formBody = {
-    images,
+    name,
+    mailfrom,
+    committee,
+    mailto,
+    accountNumber,
+    amount,
     date,
     occasion,
-    amount,
     comment,
-    mailto,
     signature,
-    name,
-    committee,
-    accountNumber,
-    mailfrom,
+    images,
   };
 
   const Response = (): JSX.Element => (

@@ -25,11 +25,12 @@ class UnsupportedFileException(Exception):
 
 
 field_title_map = {
-    "date": "Dato:",
-    "committee": "Gruppe/utvalg:",
     "name": "Navn:",
+    "mailfrom": "E-post:",
+    "committee": "Gruppe/utvalg:",
     "accountNumber": "Kontonummer:",
     "amount": "Beløp:",
+    "date": "Dato:",
     "occasion": "Anledning/arrangement:",
     "comment": "Kommentar:",
 }
@@ -37,14 +38,16 @@ field_title_map = {
 
 def data_is_valid(data):
     fields = [
-        "images",
-        "date",
-        "amount",
-        "mailto",
-        "signature",
         "name",
-        "accountNumber",
         "mailfrom",
+        "committee",
+        "mailto",
+        "accountNumber",
+        "amount",
+        "date",
+        "occasion",
+        "signature",
+        "images",
     ]
     return [f for f in fields if f not in data or len(data[f]) == 0]
 

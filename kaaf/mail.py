@@ -15,17 +15,18 @@ class MailConfigurationException(Exception):
 def create_mail(msg, body):
     msg[
         "Subject"
-    ] = f'Refusjonsskjema - {body["name"]}'
+    ] = f'Refusjonsskjema - {body.get("name", "")}'
 
     text = ""
-    text += f'Dato: {body.get("date", "")}\n'
-    text += f'Gruppe: {body.get("committee", "")}\n'
     text += f'Navn: {body.get("name", "")}\n'
+    text += f'E-post: {body.get("mailfrom", "")}\n'
+    text += f'Gruppe: {body.get("committee", "")}\n'
     text += f'Kontonummer: {body.get("accountNumber", "")}\n'
     text += f'Beløp: {body.get("amount", "")}\n'
+    text += f'Dato: {body.get("date", "")}\n'
     text += f'Anledning/arrangement: {body.get("occasion", "")}\n'
-    text += f'Kommentar: {body.get("comment", "")}\n\n'
-
+    text += f'Kommentar: {body.get("comment", "")}\n'
+    text += f'\n'
     text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med kasserer@ntnui.no!"
 
     msg.attach(MIMEText(text))
