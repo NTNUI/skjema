@@ -23,34 +23,45 @@ import pyheif
 class UnsupportedFileException(Exception):
     pass
 
-
+# Text in the PDF
 field_title_map = {
-    "committee": "Gruppe/utvalg:",
     "name": "Navn:",
-    "accountNumber": "Kontonummer:",
-    "amount": "Beløp:",
+    "mailfrom": "E-post:",
+    "committee": "Gruppe/utvalg:",
     "occasion": "Anledning/arrangement:",
     "date": "Reise startdato:",
     "dateEnd": "Reise sluttdato:",
+    "destination": "Reisedestinasjon:",
+    "travelMode": "Reisemåte:",
+    "route": "Reiserute:",
+    "distance": "Antall kilometer:",
     "team": "Reisefølge:",
     "numberOfTravelers": "Antall reisende:",
-    "destination": "Reisedestinasjon:",
-    "route": "Reiserute:",
     "comment": "Kommentar:",
+    "accountNumber": "Kontonummer:",
+    "amount": "Beløp:",
 }
 
 
 def data_is_valid(data):
     fields = [
-        "images",
+        "name",
+        "mailfrom",
+        "committee",
+        "mailto",
+        "occasion",
         "date",
         "dateEnd",
-        "amount",
-        "mailto",
-        "signature",
-        "name",
+        "destination",
+        "travelMode",
+        "route",
+        "distance",
+        "team",
+        "numberOfTravelers",
         "accountNumber",
-        "mailfrom",
+        "amount",
+        "signature",
+        "images",
     ]
     return [f for f in fields if f not in data or len(data[f]) == 0]
 

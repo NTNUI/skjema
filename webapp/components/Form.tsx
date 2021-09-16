@@ -4,8 +4,8 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import Alert from '@material-ui/lab/Alert';
 
 import Input from './Input';
-import PictureUpload from './PictureUpload';
 import SignatureUpload from './SignatureUpload';
+import PictureUpload from './PictureUpload';
 
 import styles from './Form.module.css';
 
@@ -14,22 +14,24 @@ const Form = (): JSX.Element => {
   const today = new Date().toISOString().split('T')[0].toString();
 
   // Hooks for each field in the form
-  const [images, setImages] = useState<Array<string>>([]);
-  const [date, setDate] = useState('');
-  const [occasion, setOccasion] = useState('');
-  const [amount, setAmount] = useState('');
-  const [comment, setComment] = useState('');
-  const [mailto, setMailto] = useState('');
-  const [signature, setSignature] = useState('');
   const [name, setName] = useState('');
-  const [committee, setCommittee] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
   const [mailfrom, setMailfrom] = useState('');
-  const [team, setTeam] = useState('');
-  const [numberOfTravelers, setNumberOfTravelers] = useState('');
+  const [committee, setCommittee] = useState('');
+  const [mailto, setMailto] = useState('');
+  const [occasion, setOccasion] = useState('');
+  const [date, setDate] = useState('');
   const [dateEnd, setDateEnd] = useState('');
   const [destination, setDestination] = useState('');
+  const [travelMode, setTravelMode] = useState('');
   const [route, setRoute] = useState('');
+  const [distance, setDistance] = useState('');
+  const [team, setTeam] = useState('');
+  const [numberOfTravelers, setNumberOfTravelers] = useState('');
+  const [comment, setComment] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [amount, setAmount] = useState('');
+  const [signature, setSignature] = useState('');
+  const [images, setImages] = useState<Array<string>>([]);
 
   // Hooks for submittion
   const [submitting, setSumbitting] = useState(false);
@@ -38,22 +40,24 @@ const Form = (): JSX.Element => {
 
   // The body object sendt to the backend
   const formBody = {
-    images,
-    date,
-    occasion,
-    amount,
-    comment,
-    mailto,
-    signature,
     name,
-    committee,
-    accountNumber,
     mailfrom,
-    team,
-    numberOfTravelers,
+    committee,
+    mailto,
+    occasion,
+    date,
     dateEnd,
     destination,
+    travelMode,
     route,
+    distance,
+    team,
+    numberOfTravelers,
+    comment,
+    accountNumber,
+    amount,
+    signature,
+    images,
   };
 
   const Response = (): JSX.Element => (
@@ -94,7 +98,7 @@ const Form = (): JSX.Element => {
         value={committee}
         required
         updateForm={setCommittee}
-        helperText={'Som utgiften skal betales av'}
+        helperText="Som utgiften skal betales av"
       />
       <Input
         name="Din kasserers epost"
@@ -104,21 +108,12 @@ const Form = (): JSX.Element => {
         helperText="Ofte 'gruppe-kasserer@ntnui.no'"
       />
       <Input
-        name="Kontonummer"
-        value={accountNumber}
+        name="Anledning/arrangement"
         required
-        type="number"
-        updateForm={setAccountNumber}
-        helperText="Refusjon overføres til denne kontoen"
-      />
-      <Input
-        name="Beløp"
-        value={amount}
-        required
-        type="number"
-        updateForm={setAmount}
-        adornment={'kr'}
-        helperText="Beløpet du ønsker refundert"
+        fullWidth
+        value={occasion}
+        updateForm={setOccasion}
+        helperText="Som utgiften er knyttet til"
       />
       <Input
         name="Reise startdato"
@@ -137,12 +132,33 @@ const Form = (): JSX.Element => {
         helperText="Dato dere kom hjem"
       />
       <Input
-        name="Anledning/arrangement"
+        name="Reisemål"
         required
-        fullWidth
-        value={occasion}
-        updateForm={setOccasion}
-        helperText="Som utgiften er knyttet til"
+        value={destination}
+        updateForm={setDestination}
+        helperText="F.eks. 'Domus Athletica, Oslo'"
+      />
+      <Input
+        name="Reisemåte"
+        required
+        value={travelMode}
+        updateForm={setTravelMode}
+        helperText="F.eks. leiebil, egen bil, fly"
+      />
+      <Input
+        name="Reiserute"
+        required
+        value={route}
+        updateForm={setRoute}
+        helperText="F.eks. 'Trondheim-Oslo-Trondheim'"
+      />
+      <Input
+        name="Antall kilometer"
+        required
+        value={distance}
+        updateForm={setDistance}
+        adornment={'km'}
+        helperText="Uavhengig av reisemetode"
       />
       <Input
         name="Reisefølge"
@@ -161,26 +177,28 @@ const Form = (): JSX.Element => {
         helperText="Hvor mange i reisefølget"
       />
       <Input
-        name="Reisedestinasjon"
-        required
-        value={destination}
-        updateForm={setDestination}
-        helperText="F.eks. 'Domus Athletica, Oslo'"
-      />
-      <Input
-        name="Reiserute"
-        multiline
-        required
-        value={route}
-        updateForm={setRoute}
-        helperText="F.eks. 'Trondheim-Oslo-Trondheim'"
-      />
-      <Input
         name="Kommentar"
         multiline
         fullWidth
         value={comment}
         updateForm={setComment}
+      />
+      <Input
+        name="Kontonummer"
+        value={accountNumber}
+        required
+        type="number"
+        updateForm={setAccountNumber}
+        helperText="Refusjon overføres til denne kontoen"
+      />
+      <Input
+        name="Beløp"
+        value={amount}
+        required
+        type="number"
+        updateForm={setAmount}
+        adornment={'kr'}
+        helperText="Beløpet du ønsker refundert"
       />
       <SignatureUpload updateForm={setSignature} setSignature={setSignature} />
       <PictureUpload updateForm={setImages} />
