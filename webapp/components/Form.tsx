@@ -198,7 +198,7 @@ const Form = (): JSX.Element => {
         type="number"
         updateForm={setAmount}
         adornment={'kr'}
-        helperText="Beløpet du ønsker refundert"
+        helperText="Totalsum av utlegg"
       />
       <SignatureUpload updateForm={setSignature} setSignature={setSignature} />
       <PictureUpload updateForm={setImages} />
