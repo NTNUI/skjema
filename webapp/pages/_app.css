@@ -26,3 +26,7 @@ a,
 div {
   font-family: Raleway, Arial, sans-serif;
 }
+
+.ReactModalPortal {
+  height: 0 !important;
+}
