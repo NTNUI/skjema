@@ -12,8 +12,11 @@ import styles from './Form.module.css';
 const Form = (): JSX.Element => {
   // Get today
   const today = new Date().toISOString().split('T')[0].toString();
-
+  
   // Hooks for each field in the form
+  const [phoneNumber, setPhoneNumber] = useState('+47');
+  const [password, setPassword] = useState('');
+  
   const [name, setName] = useState('');
   const [mailfrom, setMailfrom] = useState('');
   const [committee, setCommittee] = useState('');
@@ -31,7 +34,13 @@ const Form = (): JSX.Element => {
   const [success, setSuccess] = useState<boolean | null>(null);
   const [response, setResponse] = useState<string | null>(null);
 
-  // The body object sendt to the backend
+  // The body object sent to the medlem backend
+  const loginBody = {
+    "phone_number": phoneNumber,
+    "password": password
+  }
+
+  // The body object sent to the skjema backend
   const formBody = {
     name,
     mailfrom,
@@ -57,6 +66,42 @@ const Form = (): JSX.Element => {
     </div>
   );
 
+  const fetchUserData = async () => {
+    let token = ''
+    try {
+      const response = await fetch('http://localhost:8000/token/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      body: JSON.stringify(loginBody)
+    });
+      const json = await response.json();
+      token = json.access
+    }
+    catch (err) {
+      console.log(err)
+    }
+
+    try {
+      const response = await fetch('http://localhost:8000/users/profile/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const json = await response.json();
+      setName(`${json.first_name} ${json.last_name}`)
+      setMailfrom(json.email)
+      setAccountNumber(json.bank_account_number)
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <Paper elevation={3} className={styles.card}>
       <Typography
@@ -65,6 +110,26 @@ const Form = (): JSX.Element => {
       >
         Refusjonsskjema
       </Typography>
+      <Input 
+      name="Telefonnummer"
+      value={phoneNumber}
+      updateForm={setPhoneNumber}
+      helperText="Ditt telefonnummer med landskode" />
+      <Input 
+      name="Passord"
+      value={password}
+      updateForm={setPassword}
+      helperText="Ditt passord på medlem.ntnui.no"
+      type="password"/>
+      <Button variant="contained"
+        color="primary"
+        disabled={submitting || success == true}
+        style={{ width: '100%', marginTop: '3em' }}
+        className={styles.fullWidth}
+        onClick={() => fetchUserData()}
+      >
+        <Typography variant="h6">Hent data fra medlem.ntnui.no</Typography>
+      </Button>
       <Input
         name="Navn"
         value={name}
