@@ -29,8 +29,8 @@ const GroupDropDown = ({updateForm}: Props): JSX.Element => {
       groups.length > 0 ? 
       <Box>
         <Autocomplete
+            defaultValue={groups[0]}
             options={groups}
-            value={groups[0]}
             noOptionsText={"Kunne ikke finne gruppen"}
             getOptionLabel={(option) => option['name']}
             onInputChange={(event, value, reason) => updateForm(value)}
