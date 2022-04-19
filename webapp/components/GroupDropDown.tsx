@@ -46,7 +46,7 @@ const GroupDropDown = ({updateForm}: Props): JSX.Element => {
     name="Gruppe"
     required={true}
     updateForm={updateForm}
-    helperText="Som utgiften skal betales avhit"
+    helperText="Som utgiften skal betales av"
   />
   )
 }
