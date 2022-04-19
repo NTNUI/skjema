@@ -53,13 +53,13 @@ return (
         defaultExpanded={false}
         disabled={isSuccess}
         expanded={expanded}
-        style={{marginBottom: '2em', paddingLeft: '0.5em', paddingRight: '0.5em'}}
+        style={{marginBottom: '2em', paddingLeft: '0.5em', paddingRight: '0.5em', backgroundColor: '#a1e6c0', borderRadius: '5px'}}
         onChange={(e, value) => setExpanded(value)}
         >
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             >
-            <Typography>Auto-fyll med data fra medlem.ntnui.no (valgfritt)</Typography>
+            <Typography>Hent data fra medlem.ntnui.no (valgfritt)</Typography>
             </AccordionSummary>
         <Input
         name="Telefonnummer"
@@ -80,7 +80,7 @@ return (
             className={styles.fullWidth}
             onClick={() => fetchUserData()}
         >
-            <Typography variant="h6">Hent data fra medlem.ntnui.no</Typography>
+            <Typography variant="h6">Autofyll</Typography>
         </Button>
         {error && <Alert severity="error">{error}</Alert>}
     </Accordion>
