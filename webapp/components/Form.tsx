@@ -62,7 +62,8 @@ const Form = (): JSX.Element => {
 
   const updateGroup = (group: string) => {
     setGroup(group)
-    setMailto(`${group.toLowerCase()}-kasserer@ntnui.no`)
+    const groupSlug = group.toLowerCase().replace(' ', '-')
+    setMailto(`${groupSlug}-kasserer@ntnui.no`)
   }
 
   const Response = (): JSX.Element => (
