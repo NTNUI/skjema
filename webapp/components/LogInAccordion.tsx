@@ -82,7 +82,7 @@ return (
         >
             <Typography variant="h6">Autofyll</Typography>
         </Button>
-        {error && <Alert severity="error">{error}</Alert>}
+        {error && <Alert style={{marginBottom: '0.5em'}} severity="error">{error}</Alert>}
     </Accordion>
     )
 }
