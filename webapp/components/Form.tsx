@@ -4,15 +4,13 @@ import { Typography, Button, Paper, CircularProgress } from '@material-ui/core';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import Alert from '@material-ui/lab/Alert';
 
+import Input from 'components/Input';
+import PictureUpload from 'components/PictureUpload';
+import SignatureUpload from 'components/SignatureUpload';
+import GroupDropDown from 'components/GroupDropDown';
+import LogInAccordion from 'components/LogInAccordion';
 
-import Input from './Input';
-import PictureUpload from './PictureUpload';
-import SignatureUpload from './SignatureUpload';
-import GroupDropDown from './GroupDropDown';
-import LogInAccordion from './LogInAccordion';
-
-
-import styles from './Form.module.css';
+import styles from 'components/Form.module.css';
 import { updateProfile } from 'service/medlemService';
 
 const Form = (): JSX.Element => {
@@ -76,8 +74,6 @@ const Form = (): JSX.Element => {
       {success == false && <Alert severity="error">{response}</Alert>}
     </div>
   );
-
-
 
   return (
     <Paper elevation={3} className={styles.card}>

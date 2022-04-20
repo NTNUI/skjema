@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import { Typography, Button, Accordion } from '@material-ui/core';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Alert from '@material-ui/lab/Alert';
-
-
-
 import GetAppIcon from '@material-ui/icons/GetApp';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-
-import Input from './Input';
-
-import styles from './Form.module.css';
+import Input from 'components/Input';
+import styles from 'components/Form.module.css';
 import { fetchProfile, fetchToken } from 'service/medlemService';
-
 
 type Props = {
     updateForm: (name: string, mailFrom: string, bankAccount: string, token: string) => void;
@@ -25,7 +19,6 @@ const LogInAccordion = ({updateForm}: Props): JSX.Element => {
     const [error, setError] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [expanded, setExpanded] = useState(false);
-
 
     const fetchUserData = async () => {
         try {

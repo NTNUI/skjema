@@ -53,7 +53,4 @@ export const fetchGroups = async () => {
     catch {
         return []
     }
-
-
-
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Box, FormHelperText, TextField} from '@material-ui/core';
 import { fetchGroups } from 'service/medlemService';
-import Input from './Input';
+import Input from 'components/Input';
 
 
 type Props = {
