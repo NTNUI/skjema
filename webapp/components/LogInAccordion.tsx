@@ -29,7 +29,8 @@ const LogInAccordion = ({updateForm}: Props): JSX.Element => {
 
     const fetchUserData = async () => {
         try {
-            const token = await fetchToken(phoneNumber, password);
+            const trimmedPhoneNumber = phoneNumber.replace(/\s/g, '')
+            const token = await fetchToken(trimmedPhoneNumber, password);
             const profileData = await fetchProfile(token);
             
             const name = `${profileData.first_name} ${profileData.last_name}` ; 
