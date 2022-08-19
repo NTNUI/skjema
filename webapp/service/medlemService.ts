@@ -1,4 +1,4 @@
-const API_URL = 'https://api.ntnui.no'
+const API_URL = process.env.REACT_APP_API_URL || 'https://api.ntnui.no'
 const TOKEN_URL = `${API_URL}/token/`
 const PROFILE_URL = `${API_URL}/users/profile/`
 const GROUPS_URL = `${API_URL}/groups/`
