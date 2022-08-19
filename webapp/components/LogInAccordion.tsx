@@ -47,7 +47,7 @@ return (
         defaultExpanded={false}
         disabled={isSuccess}
         expanded={expanded}
-        style={{marginBottom: '2em', paddingLeft: '0.5em', paddingRight: '0.5em', backgroundColor: '#a1e6c0', borderRadius: '5px'}}
+        style={{marginBottom: '2em', paddingLeft: '0.5em', paddingRight: '0.5em', backgroundColor: '#a1e6c07a', borderRadius: '5px'}}
         onChange={(e, value) => setExpanded(value)}
         >
         <AccordionSummary
