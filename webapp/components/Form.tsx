@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { Typography, Button, Paper, CircularProgress } from '@material-ui/core';
+
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import Alert from '@material-ui/lab/Alert';
 
-import Input from './Input';
-import PictureUpload from './PictureUpload';
-import SignatureUpload from './SignatureUpload';
+import Input from 'components/Input';
+import PictureUpload from 'components/PictureUpload';
+import SignatureUpload from 'components/SignatureUpload';
+import GroupDropDown from 'components/GroupDropDown';
+import LogInAccordion from 'components/LogInAccordion';
 
-import styles from './Form.module.css';
+import styles from 'components/Form.module.css';
+import { updateProfile } from 'service/medlemService';
 
 const Form = (): JSX.Element => {
-  // Get today
   const today = new Date().toISOString().split('T')[0].toString();
-
+  const [token, setToken] = useState('');
+  
   // Hooks for each field in the form
   const [name, setName] = useState('');
   const [mailfrom, setMailfrom] = useState('');
-  const [committee, setCommittee] = useState('');
+  const [group, setGroup] = useState('');
   const [mailto, setMailto] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
@@ -25,17 +29,18 @@ const Form = (): JSX.Element => {
   const [comment, setComment] = useState('');
   const [signature, setSignature] = useState('');
   const [images, setImages] = useState<Array<string>>([]);
+  
 
   // Hooks for submittion
   const [submitting, setSumbitting] = useState(false);
   const [success, setSuccess] = useState<boolean | null>(null);
   const [response, setResponse] = useState<string | null>(null);
 
-  // The body object sendt to the backend
+  // The body object sent to the skjema backend
   const formBody = {
     name,
     mailfrom,
-    committee,
+    group,
     mailto,
     accountNumber,
     amount,
@@ -45,6 +50,19 @@ const Form = (): JSX.Element => {
     signature,
     images,
   };
+
+  const fillUserInfo = (name: string, mailFrom: string, accountNumber: string, token: string) => {
+    setName(name)
+    setMailfrom(mailFrom)
+    setAccountNumber(accountNumber)
+    setToken(token)
+  }
+
+  const updateGroup = (group: string) => {
+    setGroup(group)
+    const groupSlug = group.toLowerCase().replace(' ', '-')
+    setMailto(`${groupSlug}-kasserer@ntnui.no`)
+  }
 
   const Response = (): JSX.Element => (
     <div className={styles.response}>
@@ -61,10 +79,12 @@ const Form = (): JSX.Element => {
     <Paper elevation={3} className={styles.card}>
       <Typography
         variant="h4"
-        style={{ width: '100%', textAlign: 'center', marginBottom: '1em' }}
+        style={{ width: '100%', textAlign: 'center', marginBottom: '0.5em' }}
       >
         Refusjonsskjema
       </Typography>
+      
+      <LogInAccordion updateForm={fillUserInfo}/>
       <Input
         name="Navn"
         value={name}
@@ -79,13 +99,7 @@ const Form = (): JSX.Element => {
         updateForm={setMailfrom}
         helperText="Din kopi av skjema går hit"
       />
-      <Input
-        name="Gruppe/utvalg"
-        value={committee}
-        required
-        updateForm={setCommittee}
-        helperText={'Som utgiften skal betales av'}
-      />
+      <GroupDropDown updateForm={updateGroup} /> 
       <Input
         name="Din kasserers epost"
         value={mailto}
@@ -144,6 +158,7 @@ const Form = (): JSX.Element => {
         style={{ width: '100%', marginTop: '3em' }}
         className={styles.fullWidth}
         onClick={() => {
+          updateProfile(token, accountNumber)
           // Reset server response
           setResponse(null);
           setSuccess(null);

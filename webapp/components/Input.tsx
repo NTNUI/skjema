@@ -4,7 +4,7 @@ import styles from './Input.module.css';
 
 type Props = {
   name: string;
-  value: string;
+  value?: string;
   updateForm: (value: string) => void;
   required?: boolean;
   type?: string;
