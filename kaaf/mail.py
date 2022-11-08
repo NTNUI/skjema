@@ -9,7 +9,7 @@ from google.oauth2 import service_account
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE, formatdate
+from email.utils import COMMASPACE, formatdate, formataddr
 
 
 class MailConfigurationException(Exception):
@@ -50,7 +50,7 @@ def send_mail(mail_to, body, file):
     service_account_str = os.environ["SERVICE_ACCOUNT_STR"]
 
     msg = MIMEMultipart()
-    msg["From"] = mail_from
+    msg["From"] = formataddr(("NTNUI skjema", mail_from))
     msg["To"] = COMMASPACE.join(mail_to)
     msg["Date"] = formatdate(localtime=True)
 
