@@ -145,6 +145,7 @@ def create_pdf(data):
     pdf.cell(0, 14, "Refusjonsskjema", ln=1)
 
     pdf.set_font("Arial", "", 12)
+    data["amount"] = data["amount"].replace(".", ",") # Format amount to Norwegian standard
     for key in field_title_map.keys():
         pdf.set_font("", "B")
         pdf.cell(90, 8, txt=field_title_map[key])

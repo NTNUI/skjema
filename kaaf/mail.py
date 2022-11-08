@@ -19,7 +19,7 @@ class MailConfigurationException(Exception):
 def service_account_login(mail_from, service_account_str):
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
     credentials = service_account.Credentials.from_service_account_info(json.loads(base64.b64decode(service_account_str)), scopes=SCOPES)
-    delegated_credentials = credentials.with_subject(mail_from) 
+    delegated_credentials = credentials.with_subject(mail_from)
     return build('gmail', 'v1', credentials=delegated_credentials)
 
 
@@ -50,7 +50,7 @@ def send_mail(mail_to, body, file):
     service_account_str = os.environ["SERVICE_ACCOUNT_STR"]
 
     msg = MIMEMultipart()
-    msg["From"] = formataddr(("NTNUI skjema", mail_from))
+    msg["From"] = formataddr(("NTNUI refusjon", mail_from))
     msg["To"] = COMMASPACE.join(mail_to)
     msg["Date"] = formatdate(localtime=True)
 
