@@ -1,49 +1,28 @@
 import argparse
 import base64
+import sys
 
-from handler import create_pdf, modify_data
+from handler import create_pdf
 
-default_data = {
-    "date": "2020-12-27",
-    "amount": "69 kr",
-    "name": "Mats",
-    "accountNumber": "010101010101",
-    "committee": "Hovedstyret",
-    "occasion": "Teste litt",
-    "comment": "pls work",
+test_data = {
+    'name': 'John Doe',
+    'mailfrom': 'johndoe@ntnui.dev',
+    'committee': 'Sprint',
+    'accountNumber': '123456789',
+    'amount': '69.69',
+    'date': '2023-05-17',
+    'occasion': 'Expense reimbursement',
+    'comment': 'Some comment\n with a newline',
 }
 
+if len(sys.argv) < 4:
+    print(f"Usage: python3 {sys.argv[0]} signature.png output.pdf attachment1.png attachment2.pdf")
+    sys.exit(1)
 
-def main(data, out):
-    data = modify_data(data)
+# Parse the command line arguments
+output_file = sys.argv[1]
+signature_file = sys.argv[2]
+attachment_files = sys.argv[3:]
 
-    pdf = create_pdf(data)
-
-    with open(out, "wb") as f:
-        f.write(pdf.encode("latin-1"))
-
-    print("Done!")
-
-
-def encode_image(img):
-    with open(img, "rb") as f:
-        b64 = base64.b64encode(f.read()).decode("ascii")
-    return f'data:image/{img.split(".")[-1]};base64,{b64}'
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("signature", help="Path to signature")
-    parser.add_argument("out", help="Path to the generated pdf")
-    parser.add_argument(
-        "images", nargs=argparse.REMAINDER, default=[], help="Paths to images"
-    )
-    args = parser.parse_args()
-
-    data = {
-        **default_data,
-        "signature": encode_image(args.signature),
-        "images": [encode_image(img) for img in args.images],
-    }
-
-    main(data, args.out)
+# Call the create_pdf function to generate the PDF
+create_pdf(test_data, output_file, signature_file, attachment_files)

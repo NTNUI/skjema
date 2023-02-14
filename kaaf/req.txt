@@ -1,6 +1,8 @@
 flask
 gevent
-fpdf
+PyMuPDF
+pymupdf-fonts
+fonttools
 black
 Pillow
 sentry-sdk[flask]==0.16.2
