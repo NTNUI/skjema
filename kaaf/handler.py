@@ -1,12 +1,13 @@
 import base64
 import logging
 import io
+import os
 import tempfile
 import mail
 import functools
 import operator
-
 import fitz
+from sentry_sdk import configure_scope
 
 class UnsupportedFileException(Exception):
     pass
@@ -46,7 +47,12 @@ def data_to_str(data, field_title_map):
         result += f"{field_title_map.get(key, key)} {value}\n"
     return result
 
-def create_pdf(data, output_file, signature, images):
+def base64_to_file(data):
+    data = io.BytesIO(base64.b64decode(data))
+    signature_data = data.read().decode("utf-8")
+    return base64.b64decode(signature_data)
+
+def create_pdf(data, signature=None, images=None):
 
     # Create a new PDF document
     doc = fitz.open()
@@ -65,13 +71,22 @@ def create_pdf(data, output_file, signature, images):
     page.insert_text(fitz.Point(50, 200), data_to_str(data, field_title_map), fontname="Helvetica", fontsize=12)
     
     # Add the signature image
+    if signature is None:
+        raise RuntimeError("No signature provided")
+    # Create an image from signature and add it to the page
+    if signature.startswith("data:image"):
+        signature = base64_to_file(signature.split(",")[1])
     signature_pixmap = fitz.Pixmap(signature)
     signature_rect = fitz.Rect(50, page.bound().height * 0.67, 550, page.bound().height * 0.97)
     page.insert_image(signature_rect, pixmap=signature_pixmap)
 
     # Add the remaining pages with the receipt attachments
+    if images is None:
+        raise RuntimeError("No images provided")
     for attachment in images:
         page = doc.new_page()
+        if attachment.startswith("data:image"):
+            attachment = base64_to_file(attachment.split(",")[1])
         file_type = attachment.split('.')[-1]
         if file_type == 'pdf':
             pdf_doc = fitz.open(attachment)
@@ -80,10 +95,13 @@ def create_pdf(data, output_file, signature, images):
         elif file_type in ['jpg', 'jpeg', 'png']:
             pixmap = fitz.Pixmap(attachment)
             page.insert_image(fitz.Rect(50, 50, 550, 1000), pixmap=pixmap)
+        else:
+            raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
 
     # Save the PDF document
-    doc.save(output_file)
+    doc.save("output.pdf")
     doc.close()
+    return doc
 
 
 def handle(data):
@@ -98,17 +116,8 @@ def handle(data):
     if len(req_fields) > 0:
         return f'Requires fields {", ".join(req_fields)}', 400
 
-    #try:
-    #    data = modify_data(data)
-    #except UnsupportedFileException as e:
-    #    logging.error(f"Unsupported file type: {e}")
-    #    return (
-    #        "En av filene som ble lastet opp er ikke i støttet format. Bruk PNG, JPEG, GIF, HEIC eller PDF",
-    #        400,
-    #    )
-
     try:
-        file = create_pdf(data)
+        file = create_pdf(data, data["signature"], data["images"])
         mail.send_mail([data["mailto"], data["mailfrom"]], data, file)
     except RuntimeError as e:
         logging.warning(f"Failed to generate pdf with exception: {e}")
