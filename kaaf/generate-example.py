@@ -12,7 +12,7 @@ test_data = {
     'amount': '69.69',
     'date': '2023-05-17',
     'occasion': 'Expense reimbursement',
-    'comment': 'Some comment\n with serveral\n newlines',
+    'comment': 'Some comment\n with multiple\n newlines',
 }
 
 if len(sys.argv) < 4:
@@ -34,5 +34,10 @@ with open(signature_file, "rb") as f:
     signature = f.read()
     signature = base64.b64encode(signature).decode("utf-8")
     signature = f"data:image/png;base64,{signature}"
+    f.close()
 
+# Convert attachment files to base64
+attachment_files = [base64.b64encode(open(f, "rb").read()).decode("utf-8") for f in attachment_files]
+
+# Call the create_pdf function to generate the PDF
 create_pdf(test_data, signature, attachment_files)

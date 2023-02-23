@@ -1,11 +1,8 @@
 import base64
 import logging
-import io
 import os
 import tempfile
 import mail
-import functools
-import operator
 import fitz
 from sentry_sdk import configure_scope
 
@@ -24,6 +21,7 @@ field_title_map = {
     "comment": "Kommentar:",
 }
 
+temporary_files = []
 
 def data_is_valid(data):
     fields = [
@@ -44,13 +42,24 @@ def data_is_valid(data):
 def data_to_str(data, field_title_map):
     result = ""
     for key, value in data.items():
-        result += f"{field_title_map.get(key, key)} {value}\n"
+        if key in field_title_map:
+            result += f"{field_title_map.get(key, key)} {value}\n"
     return result
 
-def base64_to_file(data):
-    data = io.BytesIO(base64.b64decode(data))
-    signature_data = data.read().decode("utf-8")
-    return base64.b64decode(signature_data)
+
+# Decode the base64 string and save it to a temporary file
+def base64_to_file(base64_string):
+    # Decode the base64 string
+    decoded = base64.b64decode(base64_string)
+    # Create a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temporary_files.append(temp_file.name)
+    # Write the decoded data to the temporary file
+    temp_file.write(decoded)
+    # Close the file
+    temp_file.close()
+    # Return the path to the temporary file
+    return temp_file.name
 
 def create_pdf(data, signature=None, images=None):
 
@@ -85,9 +94,12 @@ def create_pdf(data, signature=None, images=None):
         raise RuntimeError("No images provided")
     for attachment in images:
         page = doc.new_page()
-        if attachment.startswith("data:image"):
-            attachment = base64_to_file(attachment.split(",")[1])
-        file_type = attachment.split('.')[-1]
+        # Get file type from base64 string
+        if not "image/" in attachment and not "application/pdf" in attachment:
+            raise UnsupportedFileException(attachment[:30])
+        parts = attachment.split(";base64,")
+        file_type = "pdf" if "application/pdf" in attachment else parts[0].split("image/")[1]
+        attachment = base64_to_file(parts[1])
         if file_type == 'pdf':
             pdf_doc = fitz.open(attachment)
             page.show_pdf_page(fitz.Rect(0, 0, 612, 792), pdf_doc, 0)
@@ -99,8 +111,11 @@ def create_pdf(data, signature=None, images=None):
             raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
 
     # Save the PDF document
-    doc.save("output.pdf")
+    doc.save("last_output.pdf")
     doc.close()
+    for f in temporary_files:
+        os.remove(f)
+        temporary_files.remove(f)
     return doc
 
 
