@@ -37,6 +37,7 @@ field_title_map = {
     "comment": "Kommentar:",
     "accountNumber": "Kontonummer:",
     "amount": "Beløp:",
+    "maxRefund": "Maks HS støtte:",
 }
 
 
@@ -144,7 +145,31 @@ def modify_data(data):
         operator.iconcat, [create_image_file(img) for img in images], []
     )
 
+    data["maxRefund"] = calculate_traveling_refund(data)
+
     return data
+
+def calculate_traveling_refund(data):
+    try:
+        distance = int(data["distance"])
+        number_of_travelers = int(data["numberOfTravelers"])
+        cost = int(data["amount"])
+
+
+        res = (distance * 2 * 0.9 * number_of_travelers) / 2
+        if((cost / 2) < res):
+            res = cost / 2
+
+        amount_pr_person = res / number_of_travelers
+
+        if(amount_pr_person <= 200):
+            res = 0
+        if(amount_pr_person >= 1500):
+            res = 1500 * number_of_travelers
+            
+        return str(res)
+    except:
+        return "feil"
 
 
 def create_pdf(data):

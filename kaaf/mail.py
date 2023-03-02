@@ -44,6 +44,7 @@ def create_mail(msg, body):
     text += f'Kommentar: {body.get("comment", "")}\n'
     text += f'Kontonummer: {body.get("accountNumber", "")}\n'
     text += f'Beløp: {body.get("amount", "")}\n'
+    text += f'Maks HS Støtte: {body.get("maxRefund", "")}\n'
     text += f'\n'
     text += f"Reiseregning er generert og vedlagt. Ved spørsmål ta kontakt med kasserer@ntnui.no!"
 
