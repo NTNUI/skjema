@@ -73,7 +73,7 @@ const Form = (): JSX.Element => {
         helperText="Ditt fulle navn"
       />
       <Input
-        name="Din epost"
+        name="Din e-post"
         value={mailfrom}
         required
         updateForm={setMailfrom}
@@ -87,7 +87,7 @@ const Form = (): JSX.Element => {
         helperText={'Som utgiften skal betales av'}
       />
       <Input
-        name="Din kasserers epost"
+        name="Din kasserers e-post"
         value={mailto}
         required
         updateForm={setMailto}
