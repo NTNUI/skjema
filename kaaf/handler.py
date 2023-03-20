@@ -37,7 +37,7 @@ field_title_map = {
     "comment": "Kommentar:",
     "accountNumber": "Kontonummer:",
     "amount": "Beløp:",
-    "maxRefund": "Maks HS støtte:",
+    "maxRefund": "(Autogenerert) Maks HS støtte:",
 }
 
 
@@ -169,7 +169,7 @@ def calculate_traveling_refund(data):
             
         return str(res)
     except:
-        return "feil"
+        return f"Noe gikk galt ved utregning av reisestøtte", 500
 
 
 def create_pdf(data):
