@@ -43,11 +43,17 @@ def data_is_valid(data):
 
 
 def data_to_str(data, field_title_map):
-    result = ""
+    left_column = []
+    right_column = []
+
     for key, value in data.items():
-        if key in field_title_map:
-            result += f"{field_title_map.get(key, key)} {value}\n"
-    return result
+        left_column.append(f"{field_title_map[key]}")
+        right_column.append(f"{value}")
+
+    left_text = "\n\n".join(left_column)
+    right_text = "\n\n".join(right_column)
+
+    return left_text, right_text
 
 
 # Decode the base64 string and save it to a temporary file
@@ -79,15 +85,18 @@ def create_pdf(data, signature=None, images=None):
     # Add the title below the logo
     page.insert_text(fitz.Point(50, 150), "Refusjonsskjema", fontname="Helvetica-Bold", fontsize=24)
 
-    # Add the input values
-    page.insert_text(fitz.Point(50, 200), data_to_str(data, field_title_map), fontname="Helvetica", fontsize=12)
-    
+    # Add the input values in a two-column layout
+    left_text, right_text = data_to_str(data, field_title_map)
+    page.insert_text(fitz.Point(50, 200), left_text, fontname="Helvetica-Bold", fontsize=12)
+    page.insert_text(fitz.Point(300, 200), right_text, fontname="Helvetica", fontsize=12)
+
     # Add the signature image
     if signature is None:
         raise RuntimeError("No signature provided")
     # Create an image from signature and add it to the page
     if signature.startswith("data:image"):
         signature = base64_to_file(signature.split(",")[1])
+    page.insert_text(fitz.Point(50, page.bound().height * 0.67), "Signatur:", fontname="Helvetica-Bold", fontsize=12)
     signature_pixmap = fitz.Pixmap(signature)
     signature_rect = fitz.Rect(50, page.bound().height * 0.67, 550, page.bound().height * 0.97)
     page.insert_image(signature_rect, pixmap=signature_pixmap)
