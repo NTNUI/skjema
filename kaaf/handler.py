@@ -5,6 +5,9 @@ import tempfile
 import mail
 import fitz
 from sentry_sdk import configure_scope
+import pyheif
+import io
+from PIL import Image
 
 class UnsupportedFileException(Exception):
     pass
@@ -96,7 +99,7 @@ def create_pdf(data, signature=None, images=None):
         page = doc.new_page()
         # Get file type from base64 string
         if not "image/" in attachment and not "application/pdf" in attachment:
-            raise UnsupportedFileException(attachment[:30])
+            raise UnsupportedFileException(f"Unsupported file type in base64 string: {attachment[:30]}")
         parts = attachment.split(";base64,")
         file_type = "pdf" if "application/pdf" in attachment else parts[0].split("image/")[1]
         attachment = base64_to_file(parts[1])
@@ -104,9 +107,25 @@ def create_pdf(data, signature=None, images=None):
             pdf_doc = fitz.open(attachment)
             page.show_pdf_page(fitz.Rect(0, 0, 612, 792), pdf_doc, 0)
             pdf_doc.close()
-        elif file_type in ['jpg', 'jpeg', 'png']:
+        elif file_type in ['jpg', 'jpeg', 'png', 'gif']:
             pixmap = fitz.Pixmap(attachment)
             page.insert_image(fitz.Rect(50, 50, 550, 1000), pixmap=pixmap)
+        elif file_type == 'heic':
+            heif_image = pyheif.read(attachment)
+            png_image = Image.frombytes(
+                heif_image.mode, 
+                heif_image.size, 
+                heif_image.data,
+                "raw",
+                heif_image.mode,
+                heif_image.stride,
+        )
+            png_bytes = io.BytesIO()
+            png_image.save(png_bytes, format="PNG")
+            width, height = png_image.size
+            samples = png_image.tobytes()
+            pixmap = fitz.Pixmap(fitz.csRGB, width, height, samples)
+            page.insert_image(page.rect, pixmap=pixmap, keep_proportion=False)
         else:
             raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
 
