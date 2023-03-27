@@ -17,7 +17,8 @@ test_data = {
     'comment': 'Some comment\n with multiple\n newlines',
 }
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 3:
+    print("Error: Missing arguments")
     print(f"Usage: python3 {sys.argv[0]} signature_file, attachment_files")
     print(f"Output: output.pdf")
     sys.exit(1)

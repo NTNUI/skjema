@@ -95,6 +95,8 @@ def create_pdf(data, signature=None, images=None):
     # Add the remaining pages with the receipt attachments
     if images is None:
         raise RuntimeError("No images provided")
+    if not isinstance(images, list):
+        images = [images]
     for attachment in images:
         page = doc.new_page()
         # Get file type from base64 string
@@ -109,7 +111,7 @@ def create_pdf(data, signature=None, images=None):
             pdf_doc.close()
         elif file_type in ['jpg', 'jpeg', 'png', 'gif']:
             pixmap = fitz.Pixmap(attachment)
-            page.insert_image(fitz.Rect(50, 50, 550, 1000), pixmap=pixmap)
+            page.insert_image(page.rect, pixmap=pixmap)
         elif file_type == 'heic':
             heif_image = pyheif.read(attachment)
             png_image = Image.frombytes(
@@ -125,7 +127,7 @@ def create_pdf(data, signature=None, images=None):
             width, height = png_image.size
             samples = png_image.tobytes()
             pixmap = fitz.Pixmap(fitz.csRGB, width, height, samples)
-            page.insert_image(page.rect, pixmap=pixmap, keep_proportion=False)
+            page.insert_image(page.rect, pixmap=pixmap)
         else:
             raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
 
