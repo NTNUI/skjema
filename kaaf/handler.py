@@ -85,8 +85,8 @@ def create_pdf(data, signature=None, images=None):
 
     # Add the input values in a two-column layout
     left_text, right_text = data_to_str(data, field_title_map)
-    page.insert_text(fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=12)
-    page.insert_text(fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=12)
+    page.insert_text(fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=11)
+    page.insert_text(fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=11)
 
     # Add the signature image
     if signature is None:
