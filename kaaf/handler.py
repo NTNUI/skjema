@@ -78,17 +78,15 @@ def create_pdf(data, signature=None, images=None):
     page = doc.new_page()
     height = page.bound().height
 
-    # Add logo to the top left corner
+    page.insert_text(fitz.Point(50, 75), "Refusjonsskjema", fontname="Helvetica-Bold", fontsize=24)
+    
     logo = fitz.Pixmap("images/ntnui.png")
-    page.insert_image(fitz.Rect(50, 50, 200, 100), pixmap=logo)
-
-    # Add the title below the logo
-    page.insert_text(fitz.Point(50, 150), "Refusjonsskjema", fontname="Helvetica-Bold", fontsize=24)
+    page.insert_image(fitz.Rect(425, 40, 525, 90), pixmap=logo)
 
     # Add the input values in a two-column layout
     left_text, right_text = data_to_str(data, field_title_map)
-    page.insert_text(fitz.Point(50, 200), left_text, fontname="Helvetica-Bold", fontsize=12)
-    page.insert_text(fitz.Point(300, 200), right_text, fontname="Helvetica", fontsize=12)
+    page.insert_text(fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=12)
+    page.insert_text(fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=12)
 
     # Add the signature image
     if signature is None:
