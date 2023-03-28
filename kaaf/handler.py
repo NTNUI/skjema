@@ -46,9 +46,10 @@ def data_to_str(data, field_title_map):
     left_column = []
     right_column = []
 
-    for key, value in data.items():
-        left_column.append(f"{field_title_map[key]}")
-        right_column.append(f"{value}")
+    for key, title in field_title_map.items():
+        if key in data:
+            left_column.append(f"{title}")
+            right_column.append(f"{data[key]}")
 
     left_text = "\n\n".join(left_column)
     right_text = "\n\n".join(right_column)
@@ -72,11 +73,8 @@ def base64_to_file(base64_string):
 
 def create_pdf(data, signature=None, images=None):
 
-    # Create a new PDF document
     doc = fitz.open()
-    # Add the first page with the input values and the signature
     page = doc.new_page()
-    height = page.bound().height
 
     page.insert_text(fitz.Point(50, 75), "Refusjonsskjema", fontname="Helvetica-Bold", fontsize=24)
     
@@ -91,7 +89,6 @@ def create_pdf(data, signature=None, images=None):
     # Add the signature image
     if signature is None:
         raise RuntimeError("No signature provided")
-    # Create an image from signature and add it to the page
     if signature.startswith("data:image"):
         signature = base64_to_file(signature.split(",")[1])
     page.insert_text(fitz.Point(50, page.bound().height * 0.67), "Signatur:", fontname="Helvetica-Bold", fontsize=12)
@@ -119,32 +116,35 @@ def create_pdf(data, signature=None, images=None):
         elif file_type in ['jpg', 'jpeg', 'png', 'gif']:
             pixmap = fitz.Pixmap(attachment)
             page.insert_image(page.rect, pixmap=pixmap)
-        elif file_type == 'heic':
-            heif_image = pyheif.read(attachment)
-            png_image = Image.frombytes(
-                heif_image.mode, 
-                heif_image.size, 
-                heif_image.data,
-                "raw",
-                heif_image.mode,
-                heif_image.stride,
-        )
-            png_bytes = io.BytesIO()
-            png_image.save(png_bytes, format="PNG")
-            width, height = png_image.size
-            samples = png_image.tobytes()
-            pixmap = fitz.Pixmap(fitz.csRGB, width, height, samples)
-            page.insert_image(page.rect, pixmap=pixmap)
+        ## TODO: HEIC is received as application/octet-stream, not as image/heic
+        # elif file_type == 'heic':
+        #     heif_image = pyheif.read(attachment)
+        #     png_image = Image.frombytes(
+        #         heif_image.mode, 
+        #         heif_image.size, 
+        #         heif_image.data,
+        #         "raw",
+        #         heif_image.mode,
+        #         heif_image.stride,
+        # )
+        #     png_bytes = io.BytesIO()
+        #     png_image.save(png_bytes, format="PNG")
+        #     width, height = png_image.size
+        #     samples = png_image.tobytes()
+        #     pixmap = fitz.Pixmap(fitz.csRGB, width, height, samples)
+        #     page.insert_image(page.rect, pixmap=pixmap)
         else:
             raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
 
     # Save the PDF document
     doc.save("last_output.pdf")
+    with open("last_output.pdf", "rb") as pdf_file:
+        pdf_bytes = pdf_file.read()
     doc.close()
     for f in temporary_files:
         os.remove(f)
         temporary_files.remove(f)
-    return doc
+    return pdf_bytes # Return the PDF document as bytes
 
 
 def handle(data):
