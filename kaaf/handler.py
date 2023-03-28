@@ -137,8 +137,8 @@ def create_pdf(data, signature=None, images=None):
             raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
 
     # Save the PDF document
-    doc.save("last_output.pdf")
-    with open("last_output.pdf", "rb") as pdf_file:
+    doc.save("output.pdf")
+    with open("output.pdf", "rb") as pdf_file:
         pdf_bytes = pdf_file.read()
     doc.close()
     for f in temporary_files:

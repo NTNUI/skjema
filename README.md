@@ -22,24 +22,24 @@ To run the backend/everything:
 - Start the server with `python kaaf/server.py`
 - If the frontend is exported (`yarn export`), the webapp will be available at `localhost:5000` when running `server.py`
 
-> One of the packages (pdf2image) will require poppler to work correctly with tmp files. Most linux distros come with this.
-> For MacOS `brew install poppler`
-
 ### Generating PDFs
 
 It might be nice to be able to quickly generate PDFs when developing, without having to start up everything. To do this you can run:
 
 ```python
-python kaaf/generate-example.py signature.png output.pdf image0.png image1.png ...
+python kaaf/generate-example.py signature.png attachment1.png attachment2.pdf ...
 ```
 
-Where `signature.png` and `imageN.png` are paths to image files (the latter images are optional)
+Where `signature.png` and `attachmentN.XYZ` are paths to image files.
 
 ## Environment variables
 
 | Variable        | Function                                     |
 | --------------- | -------------------------------------------- |
-| `MAIL_ADDRESS`  | Set the mail address for generated receipts |
+| `SERVICE_ACCOUNT_STR` | Google service account string          |
+| `MAIL_ADDRESS`  | Set the mail address for generated receipts  |
 | `MAIL_PASSWORD` | Password for the mail account                |
 | `ENVIRONMENT`   | Set to "production" for sentry errors        |
 | `SENTRY_DSN`    | Ingest errors to sentry                      |
+
+While developing locally, you can temporarily add environment variables to the Dockerfile, such as `ENV MAIL_ADDRESS="no-reply@ntnui.no"`.

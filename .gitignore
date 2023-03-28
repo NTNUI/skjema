@@ -4,4 +4,4 @@ webapp/out/
 venv/
 kaaf/__pycache__/
 .vscode
-last_output.pdf
+output.pdf
