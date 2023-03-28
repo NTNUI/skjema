@@ -26,7 +26,7 @@ def fix_transfer_encoding():
     """
 
     transfer_encoding = request.headers.get("Transfer-Encoding", None)
-    if transfer_encoding == u"chunked":
+    if transfer_encoding == "chunked":
         request.environ["wsgi.input_terminated"] = True
 
 

@@ -7,14 +7,14 @@ import magic
 from handler import create_pdf
 
 test_data = {
-    'name': 'John Doe',
-    'mailfrom': 'johndoe@ntnui.dev',
-    'committee': 'Sprint',
-    'accountNumber': '123456789',
-    'amount': '69.69',
-    'date': '2023-05-17',
-    'occasion': 'Expense reimbursement',
-    'comment': 'Some comment\n with multiple\n newlines',
+    "name": "John Doe",
+    "mailfrom": "johndoe@ntnui.dev",
+    "committee": "Sprint",
+    "accountNumber": "123456789",
+    "amount": "69.69",
+    "date": "2023-05-17",
+    "occasion": "Expense reimbursement",
+    "comment": "Some comment\n with multiple\n newlines",
 }
 
 if len(sys.argv) < 3:
@@ -27,11 +27,13 @@ if len(sys.argv) < 3:
 signature_file = sys.argv[1]
 attachment_files = sys.argv[2:]
 
-allowed_extensions = {'.pdf', '.jpg', '.jpeg', '.png', '.gif', '.heic'}
+allowed_extensions = {".pdf", ".jpg", ".jpeg", ".png", ".gif", ".heic"}
+
 
 def is_valid_file_extension(file_path, allowed_extensions):
     _, file_extension = os.path.splitext(file_path)
     return file_extension.lower() in allowed_extensions
+
 
 # Return exception if signature or attachment files are not valid
 if not is_valid_file_extension(signature_file, allowed_extensions):
@@ -70,7 +72,7 @@ for file_path in attachment_files:
 
 print(f"Signature: {signature[:50]}")
 for attachment in attachments:
-    print(f"Attachment: {attachment[:50]}")  
+    print(f"Attachment: {attachment[:50]}")
 
 # Call the create_pdf function to generate the PDF
 create_pdf(test_data, signature, attachments)

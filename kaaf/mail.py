@@ -18,16 +18,16 @@ class MailConfigurationException(Exception):
 
 
 def service_account_login(mail_from, service_account_str):
-    SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-    credentials = service_account.Credentials.from_service_account_info(json.loads(base64.b64decode(service_account_str)), scopes=SCOPES)
+    SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+    credentials = service_account.Credentials.from_service_account_info(
+        json.loads(base64.b64decode(service_account_str)), scopes=SCOPES
+    )
     delegated_credentials = credentials.with_subject(mail_from)
-    return build('gmail', 'v1', credentials=delegated_credentials)
+    return build("gmail", "v1", credentials=delegated_credentials)
 
 
 def create_mail(msg, body):
-    msg[
-        "Subject"
-    ] = f'Refusjonsskjema - {body.get("name", "")}'
+    msg["Subject"] = f'Refusjonsskjema - {body.get("name", "")}'
 
     text = ""
     text += f'Navn: {body.get("name", "")}\n'
@@ -38,7 +38,7 @@ def create_mail(msg, body):
     text += f'Dato: {body.get("date", "")}\n'
     text += f'Anledning/arrangement: {body.get("occasion", "")}\n'
     text += f'Kommentar: {body.get("comment", "")}\n'
-    text += f'\n'
+    text += f"\n"
     text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med kasserer@ntnui.no!"
 
     msg.attach(MIMEText(text))
@@ -57,7 +57,9 @@ def send_mail(mail_to, body, file):
 
     create_mail(msg, body)
 
-    filename = body.get("date", "") + " Refusjonsskjema " + body.get("name", "") + ".pdf"
+    filename = (
+        body.get("date", "") + " Refusjonsskjema " + body.get("name", "") + ".pdf"
+    )
     part = MIMEApplication(file, Name=filename)
     part["Content-Disposition"] = f'attachment; filename="{filename}"'
     msg.attach(part)
@@ -66,6 +68,6 @@ def send_mail(mail_to, body, file):
 
     service = service_account_login(mail_from, service_account_str)
     raw = base64.urlsafe_b64encode(msg.as_bytes())
-    body = { 'raw': raw.decode() }
+    body = {"raw": raw.decode()}
     messages = service.users().messages()
     messages.send(userId="me", body=body).execute()

@@ -9,6 +9,7 @@ import pyheif
 import io
 from PIL import Image
 
+
 class UnsupportedFileException(Exception):
     pass
 
@@ -25,6 +26,7 @@ field_title_map = {
 }
 
 temporary_files = []
+
 
 def data_is_valid(data):
     fields = [
@@ -71,29 +73,42 @@ def base64_to_file(base64_string):
     # Return the path to the temporary file
     return temp_file.name
 
-def create_pdf(data, signature=None, images=None):
 
+def create_pdf(data, signature=None, images=None):
     doc = fitz.open()
     page = doc.new_page()
 
-    page.insert_text(fitz.Point(50, 75), "Refusjonsskjema", fontname="Helvetica-Bold", fontsize=24)
-    
+    page.insert_text(
+        fitz.Point(50, 75), "Refusjonsskjema", fontname="Helvetica-Bold", fontsize=24
+    )
+
     logo = fitz.Pixmap("images/ntnui.png")
     page.insert_image(fitz.Rect(425, 40, 525, 90), pixmap=logo)
 
     # Add the input values in a two-column layout
     left_text, right_text = data_to_str(data, field_title_map)
-    page.insert_text(fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=11)
-    page.insert_text(fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=11)
+    page.insert_text(
+        fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=11
+    )
+    page.insert_text(
+        fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=11
+    )
 
     # Add the signature image
     if signature is None:
         raise RuntimeError("No signature provided")
     if signature.startswith("data:image"):
         signature = base64_to_file(signature.split(",")[1])
-    page.insert_text(fitz.Point(50, page.bound().height * 0.67), "Signatur:", fontname="Helvetica-Bold", fontsize=12)
+    page.insert_text(
+        fitz.Point(50, page.bound().height * 0.67),
+        "Signatur:",
+        fontname="Helvetica-Bold",
+        fontsize=12,
+    )
     signature_pixmap = fitz.Pixmap(signature)
-    signature_rect = fitz.Rect(50, page.bound().height * 0.67, 550, page.bound().height * 0.97)
+    signature_rect = fitz.Rect(
+        50, page.bound().height * 0.67, 550, page.bound().height * 0.97
+    )
     page.insert_image(signature_rect, pixmap=signature_pixmap)
 
     # Add the remaining pages with the receipt attachments
@@ -105,23 +120,27 @@ def create_pdf(data, signature=None, images=None):
         page = doc.new_page()
         # Get file type from base64 string
         if not "image/" in attachment and not "application/pdf" in attachment:
-            raise UnsupportedFileException(f"Unsupported file type in base64 string: {attachment[:30]}")
+            raise UnsupportedFileException(
+                f"Unsupported file type in base64 string: {attachment[:30]}"
+            )
         parts = attachment.split(";base64,")
-        file_type = "pdf" if "application/pdf" in attachment else parts[0].split("image/")[1]
+        file_type = (
+            "pdf" if "application/pdf" in attachment else parts[0].split("image/")[1]
+        )
         attachment = base64_to_file(parts[1])
-        if file_type == 'pdf':
+        if file_type == "pdf":
             pdf_doc = fitz.open(attachment)
             page.show_pdf_page(fitz.Rect(0, 0, 612, 792), pdf_doc, 0)
             pdf_doc.close()
-        elif file_type in ['jpg', 'jpeg', 'png', 'gif']:
+        elif file_type in ["jpg", "jpeg", "png", "gif"]:
             pixmap = fitz.Pixmap(attachment)
             page.insert_image(page.rect, pixmap=pixmap)
         ## TODO: HEIC is received as application/octet-stream, not as image/heic
         # elif file_type == 'heic':
         #     heif_image = pyheif.read(attachment)
         #     png_image = Image.frombytes(
-        #         heif_image.mode, 
-        #         heif_image.size, 
+        #         heif_image.mode,
+        #         heif_image.size,
         #         heif_image.data,
         #         "raw",
         #         heif_image.mode,
@@ -134,7 +153,9 @@ def create_pdf(data, signature=None, images=None):
         #     pixmap = fitz.Pixmap(fitz.csRGB, width, height, samples)
         #     page.insert_image(page.rect, pixmap=pixmap)
         else:
-            raise UnsupportedFileException(f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png")
+            raise UnsupportedFileException(
+                f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png"
+            )
 
     # Save the PDF document
     doc.save("output.pdf")
@@ -144,7 +165,7 @@ def create_pdf(data, signature=None, images=None):
     for f in temporary_files:
         os.remove(f)
         temporary_files.remove(f)
-    return pdf_bytes # Return the PDF document as bytes
+    return pdf_bytes  # Return the PDF document as bytes
 
 
 def handle(data):
