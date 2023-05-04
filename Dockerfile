@@ -1,5 +1,5 @@
 FROM ghcr.io/openfaas/of-watchdog:0.9.11 as watchdog
-FROM python:3.7-slim AS build-backend
+FROM python:3.11 AS build-backend
 
 WORKDIR /app
 
@@ -7,6 +7,8 @@ COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog
 
 COPY ./kaaf/req.txt ./kaaf/req.txt
+
+RUN python -m pip install --upgrade pip
 
 RUN pip install --no-cache-dir -r kaaf/req.txt
 
