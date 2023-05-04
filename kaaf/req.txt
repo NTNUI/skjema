@@ -10,5 +10,5 @@ pdf2image
 # pyheif # not available on windows, and HEIC attachments is broken
 google
 google-api-python-client
-python-magic-bin
+python-magic
 python-dotenv
