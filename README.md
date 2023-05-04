@@ -17,7 +17,8 @@ To run just the frontend:
 To run the backend/everything:
 
 - Make a virtual env with `python -m venv venv`
-- Enter the env with `source venv/bin/activate`
+- Enter the env with (Unix) `source venv/bin/activate` or (Windows) `source venv/Scripts/activate`
+- Make sure you are using latest pip with `python -m pip install --upgrade pip`
 - Install packages with `pip install -r kaaf/req.txt`
 - Start the server with `python kaaf/server.py`
 - If the frontend is exported (`yarn export`), the webapp will be available at `localhost:5000` when running `server.py`

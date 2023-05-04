@@ -5,7 +5,6 @@ import tempfile
 import mail
 import fitz
 from sentry_sdk import configure_scope
-import pyheif
 import io
 from PIL import Image
 
@@ -117,7 +116,6 @@ def create_pdf(data, signature=None, images=None):
     if not isinstance(images, list):
         images = [images]
     for attachment in images:
-        page = doc.new_page()
         # Get file type from base64 string
         if not "image/" in attachment and not "application/pdf" in attachment:
             raise UnsupportedFileException(
@@ -130,9 +128,12 @@ def create_pdf(data, signature=None, images=None):
         attachment = base64_to_file(parts[1])
         if file_type == "pdf":
             pdf_doc = fitz.open(attachment)
-            page.show_pdf_page(fitz.Rect(0, 0, 612, 792), pdf_doc, 0)
+            for i in range(pdf_doc.page_count):
+                page = doc.new_page()
+                page.show_pdf_page(fitz.Rect(0, 0, 612, 792), pdf_doc, i)
             pdf_doc.close()
         elif file_type in ["jpg", "jpeg", "png", "gif"]:
+            page = doc.new_page()
             pixmap = fitz.Pixmap(attachment)
             page.insert_image(page.rect, pixmap=pixmap)
         ## TODO: HEIC is received as application/octet-stream, not as image/heic

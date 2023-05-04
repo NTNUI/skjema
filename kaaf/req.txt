@@ -7,6 +7,7 @@ black
 Pillow
 sentry-sdk[flask]==0.16.2
 pdf2image
-pyheif
+# pyheif # not available on windows, and HEIC attachments is broken
 google
 google-api-python-client
+python-magic-bin
