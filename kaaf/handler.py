@@ -1,20 +1,12 @@
 import base64
 import logging
-import io
+import os
 import tempfile
 import mail
-import functools
-import operator
-
-from fpdf import FPDF
-from PIL import Image
+import fitz
 from sentry_sdk import configure_scope
-
-# Handle PDF files
-from pdf2image import convert_from_path
-
-# Handle HEIC photoes
-import pyheif
+import io
+from PIL import Image
 
 
 class UnsupportedFileException(Exception):
@@ -40,6 +32,8 @@ field_title_map = {
     "maxRefund": "(Autogenerert) Maks HS støtte:",
 }
 
+temporary_files = []
+
 
 def data_is_valid(data):
     fields = [
@@ -64,90 +58,52 @@ def data_is_valid(data):
     return [f for f in fields if f not in data or len(data[f]) == 0]
 
 
-class PDF(FPDF):
-    def header(self):
-        self.image("images/ntnui.png", 10, 10, 33)
-        self.set_font("Arial", "B", 15)
-        self.ln(20)
+def data_to_str(data, field_title_map):
+    left_column = []
+    right_column = []
 
-    def footer(self):
-        self.set_y(-15)
-        self.set_font("Arial", "I", 8)
-        self.cell(0, 10, f"Side {str(self.page_no())}/{{nb}}", 0, 0, "C")
+    for key, title in field_title_map.items():
+        if key in data:
+            left_column.append(f"{title}")
+            right_column.append(f"{data[key]}")
 
+    left_text = "\n\n".join(left_column)
+    right_text = "\n\n".join(right_column)
 
-def image_to_byte_array(image: Image, fmt=None):
-    imgByteArr = io.BytesIO()
-    image.save(imgByteArr, format=fmt if fmt is not None else image.format)
-    imgByteArr = imgByteArr.getvalue()
-    return imgByteArr
+    return left_text, right_text
 
 
-def create_image_file(image):
-    """
-    Take an image in BASE64 format and return a NamedTemporaryFile containing the image.
-    Will handle PNG, JPEG and GIF without any changes, as FPDF will handle those files
-    without problem. For PDFs we use pdf2image to convert each page to an image. For HEIC
-    pictures we use pyheif to convert it to a jpeg.
-    """
+# Decode the base64 string and save it to a temporary file
+def base64_to_file(base64_string):
+    # Decode the base64 string
+    decoded = base64.b64decode(base64_string)
+    # Create a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temporary_files.append(temp_file.name)
+    # Write the decoded data to the temporary file
+    temp_file.write(decoded)
+    # Close the file
+    temp_file.close()
+    # Return the path to the temporary file
+    return temp_file.name
 
-    if not "image/" in image and not "application/pdf" in image:
-        raise UnsupportedFileException(image[:30])
-    parts = image.split(";base64,")
-    decoded = base64.b64decode(parts[1])
-    suffix = "pdf" if "application/pdf" in image else parts[0].split("image/")[1]
-    suffix = suffix.lower()
-    f = tempfile.NamedTemporaryFile(suffix=f".{suffix}")
-    f.write(decoded)
-    f.flush()
+def add_page_number(page, page_number, total_pages):
+    footer_text = f"Side {page_number} av {total_pages}"
+    fontsize = 9
+    fontname = "Helvetica"
+    
+    # Measure the width of the rendered footer_text
+    font = fitz.Font(fontname)
+    text_width = font.text_length(footer_text, fontsize)
 
-    """
-    FPDF does not support pdf files as input, therefore convert file:pdf to array[image:jpg]
-    """
-    if suffix == "pdf":
-        files = []
-        pil_images = convert_from_path(f.name, fmt="jpeg")
-        for img in pil_images:
-            f = tempfile.NamedTemporaryFile(suffix=f".{suffix}")
-            f.write(image_to_byte_array(img))
-            files.append({"file": f, "type": "jpeg"})
-            f.flush()
-        return files
-
-    """
-    FPDF does not support heic files as input, therefore we covert a image:heic image:jpg
-    """
-    if suffix == "heic":
-        fmt = "JPEG"
-        heif_file = pyheif.read(f.name)
-        img = Image.frombytes(
-            heif_file.mode,
-            heif_file.size,
-            heif_file.data,
-            "raw",
-            heif_file.mode,
-            heif_file.stride,
-        )
-        f = tempfile.NamedTemporaryFile(suffix=f".{fmt}")
-        f.write(image_to_byte_array(img, fmt))
-        f.flush()
-        return [{"file": f, "type": fmt}]
-
-    return [{"file": f, "type": suffix.upper()}]
-
-
-def modify_data(data):
-    signature = data.pop("signature")
-    images = data.pop("images")
-
-    data["signature"] = create_image_file(signature)[0]
-    data["images"] = functools.reduce(
-        operator.iconcat, [create_image_file(img) for img in images], []
+    footer_position = fitz.Point(
+        (page.rect.width - text_width) / 2,
+        page.rect.height - 30
+    )
+    page.insert_text(
+        footer_position, footer_text, fontname=fontname, fontsize=fontsize
     )
 
-    data["maxRefund"] = calculate_traveling_refund(data)
-
-    return data
 
 def calculate_traveling_refund(data):
     try:
@@ -172,47 +128,108 @@ def calculate_traveling_refund(data):
         return f"Noe gikk galt ved utregning av reisestøtte", 500
 
 
-def create_pdf(data):
-    pdf = PDF()
-    pdf.alias_nb_pages()
-    pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
+def create_pdf(data, signature=None, images=None):
+    doc = fitz.open()
+    page = doc.new_page()
 
-    signature = data.pop("signature")
-    images = data.pop("images")
+    page.insert_text(
+        fitz.Point(50, 75), "Reiseregningsskjema", fontname="Helvetica-Bold", fontsize=24
+    )
 
-    pdf.cell(0, 14, "Reiseregning", ln=1)
+    logo = fitz.Pixmap("images/ntnui.png")
+    page.insert_image(fitz.Rect(425, 40, 525, 90), pixmap=logo)
 
-    pdf.set_font("Arial", "", 12)
-    data["amount"] = data["amount"].replace(".", ",") # Format amount to Norwegian standard
-    for key in field_title_map.keys():
-        pdf.set_font("", "B")
-        pdf.cell(90, 8, txt=field_title_map[key])
-        pdf.set_font("", "")
-        pdf.multi_cell(0, 8, txt=data[key])
+    # Add the input values in a two-column layout
+    left_text, right_text = data_to_str(data, field_title_map)
+    page.insert_text(
+        fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=11
+    )
+    page.insert_text(
+        fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=11
+    )
 
-    pdf.set_font("", "B")
-    pdf.cell(0, 20, txt="Signatur:", ln=1)
-    pdf.image(signature["file"].name, h=30, type=signature["type"])
-    signature["file"].close()
-    pdf.cell(0, 5, txt="", ln=1)
-    pdf.cell(0, 20, txt="Vedlegg:", ln=1)
-    max_img_width = 190
-    max_img_height = 220
-    for image in images:
-        img = Image.open(image["file"].name)
-        w, h = img.size
-        img.close()
+    # Add the signature image
+    if signature is None:
+        raise RuntimeError("No signature provided")
+    if signature.startswith("data:image"):
+        signature = base64_to_file(signature.split(",")[1])
+    page.insert_text(
+        fitz.Point(50, page.bound().height * 0.75),  # Adjusted to 75% from top.
+        "Signatur:",
+        fontname="Helvetica-Bold",
+        fontsize=12,
+    )
+    signature_pixmap = fitz.Pixmap(signature)
+    signature_rect = fitz.Rect(
+        50, 
+        page.bound().height * 0.75,  # Adjusted to 75% from top.
+        550, 
+        min(page.bound().height * 1.0, page.bound().height - 1)  # Adjusted to not exceed the page height.
+    )
+    page.insert_image(signature_rect, pixmap=signature_pixmap)
 
-        size = (
-            {"w": max_img_width}
-            if w / h >= max_img_width / max_img_height
-            else {"h": max_img_height}
+
+    # Add the remaining pages with the receipt attachments
+    if images is None:
+        raise RuntimeError("No images provided")
+    if not isinstance(images, list):
+        images = [images]
+    for attachment in images:
+        # Get file type from base64 string
+        if not "image/" in attachment and not "application/pdf" in attachment:
+            raise UnsupportedFileException(
+                f"Unsupported file type in base64 string: {attachment[:30]}"
+            )
+        parts = attachment.split(";base64,")
+        file_type = (
+            "pdf" if "application/pdf" in attachment else parts[0].split("image/")[1]
         )
+        attachment = base64_to_file(parts[1])
+        if file_type == "pdf":
+            pdf_doc = fitz.open(attachment)
+            for i in range(pdf_doc.page_count):
+                page = doc.new_page()
+                page.show_pdf_page(fitz.Rect(0, 0, 612, 792), pdf_doc, i)
+            pdf_doc.close()
+        elif file_type in ["jpg", "jpeg", "png", "gif"]:
+            page = doc.new_page()
+            pixmap = fitz.Pixmap(attachment)
+            page.insert_image(page.rect, pixmap=pixmap)
+        ## TODO: HEIC is received as application/octet-stream, not as image/heic
+        # elif file_type == 'heic':
+        #     heif_image = pyheif.read(attachment)
+        #     png_image = Image.frombytes(
+        #         heif_image.mode,
+        #         heif_image.size,
+        #         heif_image.data,
+        #         "raw",
+        #         heif_image.mode,
+        #         heif_image.stride,
+        # )
+        #     png_bytes = io.BytesIO()
+        #     png_image.save(png_bytes, format="PNG")
+        #     width, height = png_image.size
+        #     samples = png_image.tobytes()
+        #     pixmap = fitz.Pixmap(fitz.csRGB, width, height, samples)
+        #     page.insert_image(page.rect, pixmap=pixmap)
+        else:
+            raise UnsupportedFileException(
+                f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png"
+            )
 
-        pdf.image(image["file"].name, **size, type=image["type"])
-        image["file"].close()
-    return pdf.output(dest="S")
+    # Add page numbers to all pages
+    for i, page in enumerate(doc):
+        add_page_number(page, i + 1, doc.page_count)
+
+    # Save the PDF document
+    doc.save("output.pdf")
+    with open("output.pdf", "rb") as pdf_file:
+        pdf_bytes = pdf_file.read()
+    doc.close()
+    for f in temporary_files:
+        os.remove(f)
+        temporary_files.remove(f)
+    return pdf_bytes  # Return the PDF document as bytes
 
 
 def handle(data):
@@ -226,18 +243,11 @@ def handle(data):
     req_fields = data_is_valid(data)
     if len(req_fields) > 0:
         return f'Requires fields {", ".join(req_fields)}', 400
+    
+    data["maxRefund"] = calculate_traveling_refund(data)
 
     try:
-        data = modify_data(data)
-    except UnsupportedFileException as e:
-        logging.error(f"Unsupported file type: {e}")
-        return (
-            "En av filene som ble lastet opp er ikke i støttet format. Bruk PNG, JPEG, GIF, HEIC eller PDF",
-            400,
-        )
-
-    try:
-        file = create_pdf(data)
+        file = create_pdf(data, data["signature"], data["images"])
         mail.send_mail([data["mailto"], data["mailfrom"]], data, file)
     except RuntimeError as e:
         logging.warning(f"Failed to generate pdf with exception: {e}")

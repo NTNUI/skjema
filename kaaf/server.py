@@ -6,6 +6,8 @@ from gevent.pywsgi import WSGIServer
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from handler import handle
+from dotenv import load_dotenv
+
 
 static_file_directory = os.environ.get("STATIC_DIRECTORY", "../webapp/out/")
 
@@ -15,6 +17,12 @@ if os.environ.get("ENVIRONMENT") == "production":
         environment=os.environ.get("ENVIRONMENT"),
         integrations=[FlaskIntegration()],
     )
+else:
+    if os.path.exists(".env") and os.path.getsize(".env") != 0:
+        print("✔  .env found")
+        load_dotenv(verbose=True)
+    else:
+        print("⚠  .env file not found, or is empty")
 
 app = Flask(__name__, static_folder=static_file_directory, static_url_path="")
 
@@ -26,7 +34,7 @@ def fix_transfer_encoding():
     """
 
     transfer_encoding = request.headers.get("Transfer-Encoding", None)
-    if transfer_encoding == u"chunked":
+    if transfer_encoding == "chunked":
         request.environ["wsgi.input_terminated"] = True
 
 
@@ -43,4 +51,5 @@ def main_route():
 
 if __name__ == "__main__":
     http_server = WSGIServer(("", 5000), app)
+    print("✔  Server started at http://localhost:5000/")
     http_server.serve_forever()

@@ -1,8 +1,6 @@
 FROM ghcr.io/openfaas/of-watchdog:0.9.11 as watchdog
 FROM python:3.7-slim AS build-backend
 
-RUN apt-get update && apt-get install -y poppler-utils
-
 WORKDIR /app
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog

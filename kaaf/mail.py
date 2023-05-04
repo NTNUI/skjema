@@ -1,3 +1,4 @@
+from io import BytesIO
 import logging
 import os
 import json
@@ -17,10 +18,12 @@ class MailConfigurationException(Exception):
 
 
 def service_account_login(mail_from, service_account_str):
-    SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-    credentials = service_account.Credentials.from_service_account_info(json.loads(base64.b64decode(service_account_str)), scopes=SCOPES)
+    SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+    credentials = service_account.Credentials.from_service_account_info(
+        json.loads(base64.b64decode(service_account_str)), scopes=SCOPES
+    )
     delegated_credentials = credentials.with_subject(mail_from)
-    return build('gmail', 'v1', credentials=delegated_credentials)
+    return build("gmail", "v1", credentials=delegated_credentials)
 
 
 def create_mail(msg, body):
@@ -73,6 +76,6 @@ def send_mail(mail_to, body, file):
 
     service = service_account_login(mail_from, service_account_str)
     raw = base64.urlsafe_b64encode(msg.as_bytes())
-    body = { 'raw': raw.decode() }
+    body = {"raw": raw.decode()}
     messages = service.users().messages()
     messages.send(userId="me", body=body).execute()
