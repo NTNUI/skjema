@@ -2,27 +2,27 @@ name: Deploy reise container to Azure
 
 on:
   push:
-    branches: [ reise-master ]
+    branches: reise-master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - uses: azure/docker-login@v1
       with:
-        login-server: ntnuiskjema.azurecr.io
+        login-server: ntnuiservices.azurecr.io
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - run: |
-        docker build . -t ntnuiskjema.azurecr.io/skjema-reise:latest
-        docker push ntnuiskjema.azurecr.io/skjema-reise:latest     
+        docker build . -t ntnuiservices.azurecr.io/skjema-reise:latest
+        docker push ntnuiservices.azurecr.io/skjema-reise:latest     
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: 'ntnuireise'
+        app-name: 'ntnui-skjema-reise'
         publish-profile: ${{ secrets.REISE_AZURE_WEBAPP_PUBLISH_PROFILE }}
-        images: 'ntnuiskjema.azurecr.io/skjema-reise:latest'
+        images: 'ntnuiservices.azurecr.io/skjema-reise:latest'
