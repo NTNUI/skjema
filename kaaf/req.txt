@@ -11,3 +11,4 @@ pdf2image
 google
 google-api-python-client
 python-magic-bin
+python-dotenv

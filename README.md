@@ -35,12 +35,11 @@ Where `signature.png` and `attachmentN.XYZ` are paths to image files.
 
 ## Environment variables
 
+While developing locally, you can temporarily add environment variables to the Dockerfile, such as `ENV MAIL_ADDRESS="no-reply@ntnui.no"`, or by creating an **.env** file with `KEY=VALUE` pairs separated by a newline.
+
 | Variable        | Function                                     |
 | --------------- | -------------------------------------------- |
 | `SERVICE_ACCOUNT_STR` | Google service account string          |
 | `MAIL_ADDRESS`  | Set the mail address for generated receipts  |
-| `MAIL_PASSWORD` | Password for the mail account                |
 | `ENVIRONMENT`   | Set to "production" for sentry errors        |
 | `SENTRY_DSN`    | Ingest errors to sentry                      |
-
-While developing locally, you can temporarily add environment variables to the Dockerfile, such as `ENV MAIL_ADDRESS="no-reply@ntnui.no"`.
