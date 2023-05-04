@@ -72,6 +72,23 @@ def base64_to_file(base64_string):
     # Return the path to the temporary file
     return temp_file.name
 
+def add_page_number(page, page_number, total_pages):
+    footer_text = f"Side {page_number} av {total_pages}"
+    fontsize = 9
+    fontname = "Helvetica"
+    
+    # Measure the width of the rendered footer_text
+    font = fitz.Font(fontname)
+    text_width = font.text_length(footer_text, fontsize)
+
+    footer_position = fitz.Point(
+        (page.rect.width - text_width) / 2,
+        page.rect.height - 30
+    )
+    page.insert_text(
+        footer_position, footer_text, fontname=fontname, fontsize=fontsize
+    )
+
 
 def create_pdf(data, signature=None, images=None):
     doc = fitz.open()
@@ -157,6 +174,10 @@ def create_pdf(data, signature=None, images=None):
             raise UnsupportedFileException(
                 f"Unsupported file type: {file_type}. Use pdf, jpg, jpeg or png"
             )
+
+    # Add page numbers to all pages
+    for i, page in enumerate(doc):
+        add_page_number(page, i + 1, doc.page_count)
 
     # Save the PDF document
     doc.save("output.pdf")
