@@ -1,14 +1,14 @@
-flask
-gevent
-PyMuPDF
-pymupdf-fonts
-fonttools
-black
-Pillow
+flask==2.3.2
+gevent==22.10.2
+PyMuPDF==1.22.2
+pymupdf-fonts==1.0.5
+fonttools==4.39.3
+black==23.3.0
+Pillow==9.5.0
 sentry-sdk[flask]==0.16.2
-pdf2image
-# pyheif # not available on windows, and HEIC attachments is broken
-google
-google-api-python-client
-python-magic
-python-dotenv
+pdf2image==1.16.3
+# pyheif # not available on Windows, and HEIC attachments is broken
+google==3.0.0
+google-api-python-client==2.86.0
+python-magic==0.4.27
+python-dotenv==1.0.0
