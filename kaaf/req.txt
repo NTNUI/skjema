@@ -5,7 +5,7 @@ pymupdf-fonts==1.0.5
 fonttools==4.39.3
 black==23.3.0
 Pillow==9.5.0
-sentry-sdk[flask]==0.16.2
+sentry-sdk[flask]==1.24.0
 pdf2image==1.16.3
 # pyheif # not available on Windows, and HEIC attachments is broken
 google==3.0.0

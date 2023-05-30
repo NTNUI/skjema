@@ -11,18 +11,20 @@ from dotenv import load_dotenv
 
 static_file_directory = os.environ.get("STATIC_DIRECTORY", "../webapp/out/")
 
-if os.environ.get("ENVIRONMENT") == "production":
+
+if os.path.exists(".env") and os.path.getsize(".env") != 0:
+    load_dotenv(verbose=True)
+    print("✔  .env file loaded")
+else:
+    print("⚠  .env file not found, or is empty")
+
+if os.environ.get("SENTRY_DSN") is not None:
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
         environment=os.environ.get("ENVIRONMENT"),
         integrations=[FlaskIntegration()],
     )
-else:
-    if os.path.exists(".env") and os.path.getsize(".env") != 0:
-        print("✔  .env found")
-        load_dotenv(verbose=True)
-    else:
-        print("⚠  .env file not found, or is empty")
+    print("✔  Sentry initialized")
 
 app = Flask(__name__, static_folder=static_file_directory, static_url_path="")
 

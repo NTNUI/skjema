@@ -41,5 +41,4 @@ While developing locally, you can temporarily add environment variables to the D
 | --------------- | -------------------------------------------- |
 | `SERVICE_ACCOUNT_STR` | Google service account string          |
 | `MAIL_ADDRESS`  | Set the mail address for generated receipts  |
-| `ENVIRONMENT`   | Set to "production" for sentry errors        |
 | `SENTRY_DSN`    | Ingest errors to sentry                      |
