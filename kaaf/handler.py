@@ -107,24 +107,24 @@ def add_page_number(page, page_number, total_pages):
 
 def calculate_traveling_refund(data):
     try:
-        distance = int(data["distance"])
-        number_of_travelers = int(data["numberOfTravelers"])
-        cost = int(data["amount"])
+        distance = float(data["distance"].replace(",", "."))
+        numberOfTravelers = int(data["numberOfTravelers"])
+        amount = float(data["amount"].replace(",", "."))
 
+        res = (distance * 2 * 0.9 * numberOfTravelers) / 2
+        if((amount / 2) < res):
+            res = amount / 2
 
-        res = (distance * 2 * 0.9 * number_of_travelers) / 2
-        if((cost / 2) < res):
-            res = cost / 2
-
-        amount_pr_person = res / number_of_travelers
+        amount_pr_person = res / numberOfTravelers
 
         if(amount_pr_person <= 200):
             res = 0
         if(amount_pr_person >= 1500):
-            res = 1500 * number_of_travelers
+            res = 1500 * numberOfTravelers
             
         return str(res)
-    except:
+    except Exception as e:
+        print(e)
         return f"Noe gikk galt ved utregning av reisestøtte", 500
 
 
@@ -244,6 +244,7 @@ def handle(data):
     if len(req_fields) > 0:
         return f'Requires fields {", ".join(req_fields)}', 400
     
+    data["amount"] = data["amount"].replace(".", ",") # Norwegian standard is comma as decimal separator
     data["maxRefund"] = calculate_traveling_refund(data)
 
     try:
