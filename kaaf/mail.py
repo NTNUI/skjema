@@ -44,12 +44,12 @@ def create_mail(msg, body):
     text += f'Antall kilometer: {body.get("distance", "")}\n'
     text += f'Reisefølge: {body.get("team", "")}\n'
     text += f'Antall reisende: {body.get("numberOfTravelers", "")}\n'
-    text += f'Kommentar: {body.get("comment", "")}\n'
     text += f'Kontonummer: {body.get("accountNumber", "")}\n'
     text += f'Beløp: {body.get("amount", "")}\n'
     text += f'(Autogenerert) Maks HS støtte: {body.get("maxRefund", "")}\n'
+    text += f'Kommentar: {body.get("comment", "")}\n'
     text += f'\n'
-    text += f"Reiseregning er generert og vedlagt. Ved spørsmål ta kontakt med kasserer@ntnui.no!"
+    text += f"Reiseregning er generert og vedlagt. Ved spørsmål, ta kontakt med kasserer@ntnui.no!"
 
     msg.attach(MIMEText(text))
 

@@ -91,7 +91,7 @@ const Form = (): JSX.Element => {
         value={mailfrom}
         required
         updateForm={setMailfrom}
-        helperText="Din kopi av skjema går hit"
+        helperText="Din kopi av skjema sendes hit"
       />
       <Input
         name="Gruppe/utvalg"
@@ -156,13 +156,13 @@ const Form = (): JSX.Element => {
         name="Antall kilometer"
         required
         value={distance}
+        type="number"
         updateForm={setDistance}
         adornment={'km'}
         helperText="Uavhengig av reisemetode"
       />
       <Input
         name="Reisefølge"
-        multiline
         required
         value={team}
         updateForm={setTeam}
@@ -170,24 +170,17 @@ const Form = (): JSX.Element => {
       />
       <Input
         name="Antall reisende"
-        multiline
         required
+        type="number"
         value={numberOfTravelers}
         updateForm={setNumberOfTravelers}
         helperText="Hvor mange i reisefølget"
       />
       <Input
-        name="Kommentar"
-        multiline
-        fullWidth
-        value={comment}
-        updateForm={setComment}
-      />
-      <Input
         name="Kontonummer"
         value={accountNumber}
         required
-        type="number"
+        maxChars={32}
         updateForm={setAccountNumber}
         helperText="Refusjon overføres til denne kontoen"
       />
@@ -199,6 +192,14 @@ const Form = (): JSX.Element => {
         updateForm={setAmount}
         adornment={'kr'}
         helperText="Totalsum av utlegg"
+      />
+      <Input
+        name="Kommentar"
+        fullWidth
+        multiline
+        value={comment}
+        updateForm={setComment}
+        maxChars={300}
       />
       <SignatureUpload updateForm={setSignature} setSignature={setSignature} />
       <PictureUpload updateForm={setImages} />
