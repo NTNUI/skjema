@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Button, Paper, CircularProgress } from '@material-ui/core';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import Alert from '@material-ui/lab/Alert';
+import Turnstile from 'react-turnstile'
 
 import Input from './Input';
 import SignatureUpload from './SignatureUpload';
@@ -10,7 +11,6 @@ import PictureUpload from './PictureUpload';
 import styles from './Form.module.css';
 
 const Form = (): JSX.Element => {
-  // Get today
   const today = new Date().toISOString().split('T')[0].toString();
 
   // Hooks for each field in the form
@@ -33,7 +33,8 @@ const Form = (): JSX.Element => {
   const [signature, setSignature] = useState('');
   const [images, setImages] = useState<Array<string>>([]);
 
-  // Hooks for submittion
+  // Hooks for submission
+  const [token, setToken] = React.useState('')
   const [submitting, setSumbitting] = useState(false);
   const [success, setSuccess] = useState<boolean | null>(null);
   const [response, setResponse] = useState<string | null>(null);
@@ -70,6 +71,29 @@ const Form = (): JSX.Element => {
       {success == false && <Alert severity="error">{response}</Alert>}
     </div>
   );
+
+  const onVerify = (token: string) => {
+    setToken(token);
+
+    fetch('/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'cf-turnstile-response': token }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('Validation successful');
+      } else {
+        console.log('Validation failed: ' + data.error);
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  };
 
   return (
     <Paper elevation={3} className={styles.card}>
@@ -204,6 +228,10 @@ const Form = (): JSX.Element => {
       <SignatureUpload updateForm={setSignature} setSignature={setSignature} />
       <PictureUpload updateForm={setImages} />
       <Response />
+      <Turnstile
+        sitekey="0x4AAAAAAAFcyhiYqoLAbnWd"
+        onVerify={(token: string) => onVerify(token)}
+      />
       <Button
         variant="contained"
         color="primary"
