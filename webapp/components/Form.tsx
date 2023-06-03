@@ -68,6 +68,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Navn"
         value={name}
+        pattern="^[A-Za-zÆØÅæøå\s]+$"
         required
         updateForm={setName}
         helperText="Ditt fulle navn"
@@ -75,6 +76,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Din e-post"
         value={mailfrom}
+        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
         required
         updateForm={setMailfrom}
         helperText="Din kopi av skjema går hit"
@@ -89,6 +91,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Din kasserers e-post"
         value={mailto}
+        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
         required
         updateForm={setMailto}
         helperText="Ofte 'gruppe-kasserer@ntnui.no'"
@@ -96,6 +99,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Kontonummer"
         value={accountNumber}
+        pattern="^\d{4}\.\d{2}\.\d{5}$"
         required
         type="number"
         updateForm={setAccountNumber}
