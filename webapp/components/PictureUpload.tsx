@@ -26,7 +26,13 @@ const PictureUpload = ({ updateForm }: Props): JSX.Element => {
     setImages([...newImages]);
     setNames(newNames);
   };
-
+  
+  const validateFileSize = (file: File): boolean => {
+    const fileSizeInMB = file.size / (1024 * 1024); // Convert bytes to megabytes
+    const maxFileSizeInMB = 25;
+    return fileSizeInMB <= maxFileSizeInMB;
+  };
+  
   return (
     <>
       <div className={styles.upload}>
@@ -38,19 +44,25 @@ const PictureUpload = ({ updateForm }: Props): JSX.Element => {
             onChange={(e) => {
               const files = e.target.files || [];
               for (let i = 0; i < files.length; i++) {
-                setNames((prevNames) => [...prevNames, files[i].name]);
-                const reader = new FileReader();
-                reader.readAsDataURL(files[i]);
-                reader.addEventListener(
-                  'load',
-                  () => {
-                    setImages((prevImages) => [
-                      ...prevImages,
-                      reader.result as string,
-                    ]);
-                  },
-                  false
-                );
+                const file = files[i];
+                if (validateFileSize(file)) {
+                  setNames((prevNames) => [...prevNames, file.name]);
+                  const reader = new FileReader();
+                  reader.readAsDataURL(file);
+                  reader.addEventListener(
+                    'load',
+                    () => {
+                      setImages((prevImages) => [
+                        ...prevImages,
+                        reader.result as string,
+                      ]);
+                    },
+                    false
+                  );
+                } else {
+                  console.log(`File ${file.name} exceeds the maximum allowed size.`);
+                  // You can display an error message to the user if needed.
+                }
               }
             }}
           />
