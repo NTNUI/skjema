@@ -68,7 +68,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Navn"
         value={name}
-        pattern="^[A-Za-zÆØÅæøå\s]+$"
+        pattern="^([A-Za-zÆØÅæøåÄÖÜäöüß]+)\s([A-Za-zÆØÅæøåÄÖÜäöüß]+)$"
         required
         updateForm={setName}
         helperText="Ditt fulle navn"
@@ -99,7 +99,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Kontonummer"
         value={accountNumber}
-        pattern="^\d{4}\.\d{2}\.\d{5}$"
+        pattern="^\d{11}$"
         required
         type="number"
         updateForm={setAccountNumber}
