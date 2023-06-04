@@ -68,7 +68,7 @@ const Form = (): JSX.Element => {
       <Input
         name="Navn"
         value={name}
-        pattern="^([A-Za-zÆØÅæøåÄÖÜäöüß]+)\s([A-Za-zÆØÅæøåÄÖÜäöüß]+)$"
+        pattern="^([A-Za-zÆØÅæøåÄÖÜäöüßÁÉÚŐÓÍáéúőóíàèìòùÀÈÌÒÙ]+)\s([A-Za-zÆØÅæøåÄÖÜäöüßÁÉÚŐÓÍáéúőóíàèìòùÀÈÌÒÙ]+)$"
         required
         updateForm={setName}
         helperText="Ditt fulle navn"
