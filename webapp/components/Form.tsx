@@ -10,7 +10,6 @@ import SignatureUpload from './SignatureUpload';
 import styles from './Form.module.css';
 
 const Form = (): JSX.Element => {
-  // Get today
   const today = new Date().toISOString().split('T')[0].toString();
 
   // Hooks for each field in the form
@@ -77,7 +76,7 @@ const Form = (): JSX.Element => {
         value={mailfrom}
         required
         updateForm={setMailfrom}
-        helperText="Din kopi av skjema går hit"
+        helperText="Din kopi av skjema sendes hit"
       />
       <Input
         name="Gruppe/utvalg"
@@ -97,7 +96,7 @@ const Form = (): JSX.Element => {
         name="Kontonummer"
         value={accountNumber}
         required
-        type="number"
+        maxChars={32}
         updateForm={setAccountNumber}
         helperText="Refusjon overføres til denne kontoen"
       />
@@ -130,6 +129,7 @@ const Form = (): JSX.Element => {
         multiline
         fullWidth
         required
+        maxChars={500}
         value={comment}
         updateForm={setComment}
         helperText="Beskriv utgiften"

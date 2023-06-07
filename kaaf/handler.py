@@ -107,7 +107,7 @@ def create_pdf(data, signature=None, images=None):
         fitz.Point(50, 150), left_text, fontname="Helvetica-Bold", fontsize=11
     )
     page.insert_text(
-        fitz.Point(250, 150), right_text, fontname="Helvetica", fontsize=11
+        fitz.Point(240, 150), right_text, fontname="Helvetica", fontsize=11
     )
 
     # Add the signature image
@@ -201,6 +201,14 @@ def handle(data):
     req_fields = data_is_valid(data)
     if len(req_fields) > 0:
         return f'Requires fields {", ".join(req_fields)}', 400
+
+    data["amount"] = data["amount"].replace(".", ",") # Norwegian standard is comma as decimal separator
+    data["comment"] = data["comment"].replace("\n", "  ") # Strip newlines from comment
+    # If comment is longer than 50 characters, add newline after every 50 characters to avoid overflowing the pdf
+    if len(data["comment"]) > 50:
+        data["comment"] = "\n".join(
+            data["comment"][i : i + 50] for i in range(0, len(data["comment"]), 50)
+        )
 
     try:
         file = create_pdf(data, data["signature"], data["images"])

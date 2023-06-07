@@ -39,7 +39,7 @@ def create_mail(msg, body):
     text += f'Anledning/arrangement: {body.get("occasion", "")}\n'
     text += f'Kommentar: {body.get("comment", "")}\n'
     text += f"\n"
-    text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med kasserer@ntnui.no!"
+    text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål, ta kontakt med kasserer@ntnui.no!"
 
     msg.attach(MIMEText(text))
 
