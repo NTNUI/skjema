@@ -111,7 +111,7 @@ def calculate_traveling_refund(data):
         numberOfTravelers = int(data["numberOfTravelers"])
         amount = float(data["amount"].replace(",", "."))
 
-        res = (distance * 2 * 0.9 * numberOfTravelers) / 2
+        res = (distance * 0.9 * numberOfTravelers) / 2
         if((amount / 2) < res):
             res = amount / 2
 
