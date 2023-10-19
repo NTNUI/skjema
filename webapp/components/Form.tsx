@@ -153,7 +153,7 @@ const Form = (): JSX.Element => {
         helperText="F.eks. 'Trondheim-Oslo-Trondheim'"
       />
       <Input
-        name="Antall kilometer"
+        name="Antall kilometer (sammenlagt tur/retur)"
         required
         value={distance}
         type="number"
