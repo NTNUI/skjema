@@ -12,6 +12,7 @@ from PIL import Image
 class UnsupportedFileException(Exception):
     pass
 
+
 # Text in the PDF
 field_title_map = {
     "name": "Navn:",
@@ -87,11 +88,12 @@ def base64_to_file(base64_string):
     # Return the path to the temporary file
     return temp_file.name
 
+
 def add_page_number(page, page_number, total_pages):
     footer_text = f"Side {page_number} av {total_pages}"
     fontsize = 9
     fontname = "Helvetica"
-    
+
     # Measure the width of the rendered footer_text
     font = fitz.Font(fontname)
     text_width = font.text_length(footer_text, fontsize)
@@ -112,16 +114,16 @@ def calculate_traveling_refund(data):
         amount = float(data["amount"].replace(",", "."))
 
         res = (distance * 0.9 * numberOfTravelers) / 2
-        if((amount / 2) < res):
+        if ((amount / 2) < res):
             res = amount / 2
 
         amount_pr_person = res / numberOfTravelers
 
-        if(amount_pr_person <= 200):
+        if (amount_pr_person <= 200):
             res = 0
-        if(amount_pr_person >= 1500):
-            res = 1500 * numberOfTravelers
-            
+        if (amount_pr_person >= 3000):
+            res = 3000 * numberOfTravelers
+
         return str(res)
     except Exception as e:
         print(e)
@@ -154,20 +156,21 @@ def create_pdf(data, signature=None, images=None):
     if signature.startswith("data:image"):
         signature = base64_to_file(signature.split(",")[1])
     page.insert_text(
-        fitz.Point(50, page.bound().height * 0.75),  # Adjusted to 75% from top.
+        # Adjusted to 75% from top.
+        fitz.Point(50, page.bound().height * 0.75),
         "Signatur:",
         fontname="Helvetica-Bold",
         fontsize=12,
     )
     signature_pixmap = fitz.Pixmap(signature)
     signature_rect = fitz.Rect(
-        50, 
+        50,
         page.bound().height * 0.75,  # Adjusted to 75% from top.
-        550, 
-        min(page.bound().height * 1.0, page.bound().height - 1)  # Adjusted to not exceed the page height.
+        550,
+        # Adjusted to not exceed the page height.
+        min(page.bound().height * 1.0, page.bound().height - 1)
     )
     page.insert_image(signature_rect, pixmap=signature_pixmap)
-
 
     # Add the remaining pages with the receipt attachments
     if images is None:
@@ -182,7 +185,8 @@ def create_pdf(data, signature=None, images=None):
             )
         parts = attachment.split(";base64,")
         file_type = (
-            "pdf" if "application/pdf" in attachment else parts[0].split("image/")[1]
+            "pdf" if "application/pdf" in attachment else parts[0].split("image/")[
+                1]
         )
         attachment = base64_to_file(parts[1])
         if file_type == "pdf":
@@ -195,7 +199,7 @@ def create_pdf(data, signature=None, images=None):
             page = doc.new_page()
             pixmap = fitz.Pixmap(attachment)
             page.insert_image(page.rect, pixmap=pixmap)
-        ## TODO: HEIC is received as application/octet-stream, not as image/heic
+        # TODO: HEIC is received as application/octet-stream, not as image/heic
         # elif file_type == 'heic':
         #     heif_image = pyheif.read(attachment)
         #     png_image = Image.frombytes(
@@ -243,14 +247,16 @@ def handle(data):
     req_fields = data_is_valid(data)
     if len(req_fields) > 0:
         return f'Requires fields {", ".join(req_fields)}', 400
-    
-    data["amount"] = data["amount"].replace(".", ",") # Norwegian standard is comma as decimal separator
+
+    # Norwegian standard is comma as decimal separator
+    data["amount"] = data["amount"].replace(".", ",")
     data["maxRefund"] = calculate_traveling_refund(data)
-    data["comment"] = data["comment"].replace("\n", "  ") # Strip newlines from comment
+    data["comment"] = data["comment"].replace(
+        "\n", "  ")  # Strip newlines from comment
     # If comment is longer than 50 characters, add newline after every 50 characters to avoid overflowing the pdf
     if len(data["comment"]) > 50:
         data["comment"] = "\n".join(
-            data["comment"][i : i + 50] for i in range(0, len(data["comment"]), 50)
+            data["comment"][i: i + 50] for i in range(0, len(data["comment"]), 50)
         )
 
     try:
